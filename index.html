@@ -6,91 +6,102 @@
     <meta name="description" content="Curumim News - Seu portal de notícias moderno e interativo">
     <title>Curumim News | Portal de Notícias</title>
     <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/modern.css">
+    <link rel="stylesheet" href="assets/css/novo-layout.css">
     <link rel="icon" type="image/png" href="assets/img/favicon.png">
     <!-- Font Awesome para ícones -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
 </head>
 <body>
     <header class="site-header">
-        <div class="container">
-            <div class="logo-container">
-                <a href="/" class="logo">
-                    <img src="assets/img/logo.png" alt="Curumim News Logo">
-                </a>
-                <button class="theme-toggle" aria-label="Alternar tema claro/escuro">
-                    <i class="fas fa-moon"></i>
-                </button>
+        <div class="container header-container">
+            <a href="/" class="logo">
+                <img src="assets/img/curumimLogo.png" alt="Curumim News Logo">
+            </a>
+            
+            <div class="search-container">
+                <div class="search-box">
+                    <input type="text" placeholder="Pesquisar notícias..." aria-label="Pesquisar notícias">
+                    <button class="voice-search" aria-label="Pesquisa por voz">
+                        <i class="fas fa-microphone"></i>
+                    </button>
+                    <button class="search-button" aria-label="Buscar">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
             </div>
             
             <nav class="main-nav">
-                <button class="menu-toggle" aria-label="Abrir menu">
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                </button>
                 <ul class="nav-list">
-                    <li><a href="/" class="active">Home</a></li>
-                    <li><a href="/curiosidades.html">Curiosidades</a></li>
-                    <li><a href="/sobre.html">Sobre</a></li>
-                    <li><a href="/admin/login.html" class="nav-login"><i class="fas fa-user"></i> Entrar</a></li>
+                    <li><a href="/">NOTÍCIAS</a></li>
+                    <li><a href="/curiosidades.html">CURIOSIDADES</a></li>
+                    <li><a href="/sobre.html">SOBRE</a></li>
                 </ul>
             </nav>
+            
+            <div class="user-profile">
+                <!-- Círculo de perfil removido -->
+            </div>
         </div>
     </header>
 
     <main>
-        <!-- Seção de destaque com carousel -->
-        <section class="featured-news">
+        <!-- Título da seção principal -->
+        <section class="latest-news-header">
             <div class="container">
-                <h2 class="section-title"><i class="fas fa-star"></i> Destaques</h2>
-                <div class="news-carousel">
-                    <div class="carousel-container" id="featured-carousel">
-                        <!-- Conteúdo dinâmico será injetado via JavaScript -->
-                        <div class="skeleton-loader featured-loader"></div>
+                <h2 class="main-title">ULTIMAS NOTÍCIAS</h2>
+            </div>
+        </section>
+
+        <!-- Grid de Notícias -->
+        <section class="news-content">
+            <div class="container">
+                <div class="news-grid-layout">
+                    <!-- Notícia Principal (à esquerda) -->
+                    <div class="main-news-card">
+                        <div class="category-tag">Esportes</div>
+                        <h3 class="news-title">CORINTHIANS É CONVIDADO PARA O MUNDIAL DE CLUBES FIFA</h3>
+                        <p class="news-subtitle">Acompanhe em tempo real</p>
                     </div>
-                    <div class="carousel-controls">
-                        <button class="carousel-control prev" aria-label="Notícia anterior">
-                            <i class="fas fa-chevron-left"></i>
-                        </button>
-                        <div class="carousel-indicators" id="carousel-indicators">
-                            <!-- Indicadores serão adicionados via JavaScript -->
+                    
+                    <!-- Notícias Secundárias (à direita) -->
+                    <div class="secondary-news-container">
+                        <div class="secondary-news-card" id="secondary-news-1">
+                            <h3 class="news-title">RAISSA LEAL GANHA O BAGULHO LÁ</h3>
                         </div>
-                        <button class="carousel-control next" aria-label="Próxima notícia">
-                            <i class="fas fa-chevron-right"></i>
-                        </button>
+                        
+                        <div class="secondary-news-card" id="secondary-news-2">
+                            <h3 class="news-title">PAPA FRANCISCO MORRE TADINHO</h3>
+                        </div>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- Últimas notícias com cards -->
-        <section class="latest-news">
+        <!-- Lista de Notícias Adicionais -->
+        <section class="additional-news">
             <div class="container">
-                <div class="section-header">
-                    <h2 class="section-title"><i class="fas fa-newspaper"></i> Últimas Notícias</h2>
-                    <div class="section-controls">
-                        <select id="news-filter" class="filter-select" aria-label="Filtrar notícias">
-                            <option value="all">Todas as notícias</option>
-                            <option value="politica">Política</option>
-                            <option value="economia">Economia</option>
-                            <option value="tecnologia">Tecnologia</option>
-                            <option value="esportes">Esportes</option>
-                            <option value="entretenimento">Entretenimento</option>
-                        </select>
-                    </div>
+                <h2 class="section-title">MAIS NOTÍCIAS</h2>
+                
+                <div class="category-filters">
+                    <button class="filter-btn active" data-category="all">Todas</button>
+                    <button class="filter-btn" data-category="Política">Política</button>
+                    <button class="filter-btn" data-category="Esportes">Esportes</button>
+                    <button class="filter-btn" data-category="Entretenimento">Entretenimento</button>
+                    <button class="filter-btn" data-category="Tecnologia">Tecnologia</button>
                 </div>
                 
-                <div class="news-grid" id="news-grid">
-                    <!-- Cards de notícias serão injetados via JavaScript -->
-                    <div class="skeleton-loader card-loader"></div>
-                    <div class="skeleton-loader card-loader"></div>
-                    <div class="skeleton-loader card-loader"></div>
-                    <div class="skeleton-loader card-loader"></div>
-                    <div class="skeleton-loader card-loader"></div>
-                    <div class="skeleton-loader card-loader"></div>
+                <div class="news-loading" id="news-loading">
+                    <p>Carregando notícias...</p>
                 </div>
                 
-                <div class="pagination-container">
+                <div class="news-grid" id="news-container">
+                    <!-- Notícias adicionais serão injetadas via JavaScript -->
+                </div>
+                
+                <div class="load-more-container">
                     <button id="load-more" class="btn-load-more">
                         <span>Carregar mais</span>
                         <i class="fas fa-spinner fa-spin hidden"></i>
@@ -99,65 +110,97 @@
             </div>
         </section>
 
-        <!-- Newsletter -->
-        <section class="newsletter-section">
+        <!-- Seção de Curiosidades -->
+        <section class="curiosidades-section">
             <div class="container">
-                <div class="newsletter-card">
-                    <div class="newsletter-content">
-                        <h2><i class="fas fa-envelope"></i> Fique por dentro</h2>
-                        <p>Assine nossa newsletter e receba as principais notícias diretamente no seu e-mail.</p>
-                        <form id="newsletter-form" class="newsletter-form">
-                            <div class="form-group">
-                                <input type="email" id="newsletter-email" placeholder="Seu melhor e-mail" required>
-                                <button type="submit" class="btn-subscribe">Assinar</button>
-                            </div>
-                        </form>
+                <div class="section-header">
+                    <h2 class="section-title">CURIOSIDADES</h2>
+                    <a href="/curiosidades.html" class="view-all">Ver todas</a>
+                </div>
+                
+                <div class="curiosidades-container" id="curiosidades-home">
+                    <!-- Curiosidades serão injetadas via JavaScript -->
+                    <div class="curiosidade-card-loading">
+                        <p>Carregando curiosidades...</p>
                     </div>
                 </div>
             </div>
         </section>
     </main>
 
+    <!-- Widget de Clima -->
+    <aside class="weather-widget">
+        <div class="weather-content">
+            <img src="https://openweathermap.org/img/wn/10d@2x.png" alt="Clima" class="weather-icon" id="weather-icon">
+            <div class="weather-info">
+                <div class="weather-city" id="weather-city">Manaus</div>
+                <span class="weather-temp" id="weather-temp">18°C</span>
+            </div>
+        </div>
+        <div class="weather-loading">Carregando</div>
+    </aside>
+
     <footer class="site-footer">
         <div class="container">
-            <div class="footer-grid">
-                <div class="footer-about">
-                    <img src="assets/img/logo-white.png" alt="Curumim News" class="footer-logo">
+            <div class="footer-content">
+                <div class="footer-logo">
+                    <img src="assets/img/curumimLogo.png" alt="Curumim News">
                     <p>O Curumim News é um portal de notícias independente comprometido com a verdade e a qualidade da informação.</p>
                 </div>
                 
                 <div class="footer-links">
-                    <h3>Links Rápidos</h3>
-                    <ul>
-                        <li><a href="/">Home</a></li>
-                        <li><a href="/curiosidades.html">Curiosidades</a></li>
-                        <li><a href="/sobre.html">Sobre</a></li>
-                        <li><a href="/admin/login.html">Área Administrativa</a></li>
-                    </ul>
-                </div>
-                
-                <div class="footer-social">
-                    <h3>Redes Sociais</h3>
-                    <div class="social-icons">
-                        <a href="#" aria-label="Facebook"><i class="fab fa-facebook"></i></a>
-                        <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
-                        <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
-                        <a href="#" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+                    <div class="footer-section">
+                        <h3>Links Rápidos</h3>
+                        <ul>
+                            <li><a href="/">Home</a></li>
+                            <li><a href="/curiosidades.html">Curiosidades</a></li>
+                            <li><a href="/sobre.html">Sobre</a></li>
+                        </ul>
+                    </div>
+                    
+                    <div class="footer-section">
+                        <h3>Categorias</h3>
+                        <ul>
+                            <li><a href="#">Política</a></li>
+                            <li><a href="#">Esportes</a></li>
+                            <li><a href="#">Entretenimento</a></li>
+                            <li><a href="#">Tecnologia</a></li>
+                        </ul>
+                    </div>
+                    
+                    <div class="footer-section">
+                        <h3>Institucional</h3>
+                        <ul>
+                            <li><a href="/sobre.html">Quem Somos</a></li>
+                            <li><a href="#">Política de Privacidade</a></li>
+                            <li><a href="#">Termos de Uso</a></li>
+                        </ul>
                     </div>
                 </div>
             </div>
             
-            <div class="copyright">
-                <p>&copy; 2023 Curumim News. Todos os direitos reservados.</p>
+            <div class="footer-bottom">
+                <div class="social-icons">
+                    <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                    <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                    <a href="#" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+                </div>
+                
+                <div class="copyright">
+                    <p>&copy; 2023 Curumim News. Todos os direitos reservados.</p>
+                </div>
             </div>
         </div>
     </footer>
 
-    <!-- Componente Toast para notificações -->
-    <div id="toast-container" class="toast-container"></div>
+    <!-- Toast para notificações -->
+    <div id="toast" class="toast"></div>
 
     <!-- Scripts -->
+    <script type="module" src="assets/js/api.js"></script>
     <script type="module" src="assets/js/main.js"></script>
     <script type="module" src="assets/js/home.js"></script>
+    <script type="module" src="assets/js/novo-layout.js"></script>
 </body>
 </html> 

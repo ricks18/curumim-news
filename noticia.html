@@ -3,176 +3,216 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Curumim News - Leia notícias completas e atualizadas">
-    <title>Notícia | Curumim News</title>
-    <link rel="stylesheet" href="assets/css/style.css">
+    <meta name="description" content="Curumim News - Leia as últimas notícias do Brasil e do mundo">
+    <title>Título da Notícia | Curumim News</title>
+    <link rel="stylesheet" href="assets/css/modern.css">
+    <link rel="stylesheet" href="assets/css/noticia.css">
     <link rel="icon" type="image/png" href="assets/img/favicon.png">
     <!-- Font Awesome para ícones -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts - Adicionando fonte Georgia para aparência de jornal -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Georgia:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
     <header class="site-header">
-        <div class="container">
-            <div class="logo-container">
-                <a href="/" class="logo">
-                    <img src="assets/img/logo.png" alt="Curumim News Logo">
-                </a>
-                <button class="theme-toggle" aria-label="Alternar tema claro/escuro">
-                    <i class="fas fa-moon"></i>
-                </button>
+        <div class="container header-container">
+            <a href="/" class="logo">
+                <img src="assets/img/curumimLogo.png" alt="Curumim News Logo">
+            </a>
+            
+            <div class="search-container">
+                <div class="search-box">
+                    <input type="text" placeholder="Pesquisar notícias..." aria-label="Pesquisar notícias">
+                    <button class="voice-search" aria-label="Pesquisa por voz">
+                        <i class="fas fa-microphone"></i>
+                    </button>
+                    <button class="search-button" aria-label="Buscar">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
             </div>
             
             <nav class="main-nav">
-                <button class="menu-toggle" aria-label="Abrir menu">
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                </button>
                 <ul class="nav-list">
-                    <li><a href="/">Home</a></li>
-                    <li><a href="/curiosidades.html">Curiosidades</a></li>
-                    <li><a href="/sobre.html">Sobre</a></li>
-                    <li><a href="/admin/login.html" class="nav-login"><i class="fas fa-user"></i> Entrar</a></li>
+                    <li><a href="/">NOTÍCIAS</a></li>
+                    <li><a href="/curiosidades.html">CURIOSIDADES</a></li>
+                    <li><a href="/sobre.html">SOBRE</a></li>
                 </ul>
             </nav>
+            
+            <div class="user-profile">
+                <!-- Círculo de perfil removido -->
+            </div>
         </div>
     </header>
 
     <main>
-        <article class="news-article">
+        <article class="article-container">
             <div class="container">
-                <!-- Breadcrumb -->
-                <div class="breadcrumb">
-                    <a href="/"><i class="fas fa-home"></i> Home</a>
-                    <span class="separator"><i class="fas fa-chevron-right"></i></span>
-                    <span id="article-category">Categoria</span>
-                    <span class="separator"><i class="fas fa-chevron-right"></i></span>
-                    <span id="article-title-breadcrumb">Carregando...</span>
-                </div>
-
-                <!-- Skeleton loader para o conteúdo principal -->
-                <div id="article-loader" class="article-skeleton">
-                    <div class="skeleton-loader title-loader"></div>
-                    <div class="skeleton-loader meta-loader"></div>
-                    <div class="skeleton-loader image-loader"></div>
-                    <div class="skeleton-loader text-loader"></div>
-                    <div class="skeleton-loader text-loader"></div>
-                    <div class="skeleton-loader text-loader"></div>
+                <div class="article-header">
+                    <div class="article-meta">
+                        <span class="article-category">Esportes</span>
+                        <span class="article-date">Publicado em: <time datetime="2023-05-10">10 de Maio de 2023</time></span>
+                    </div>
+                    
+                    <h1 class="article-title">CORINTHIANS É CONVIDADO PARA O MUNDIAL DE CLUBES FIFA</h1>
+                    
+                    <div class="article-source">
+                        <span class="source-label">Fonte:</span>
+                        <a href="#" class="source-link" target="_blank">Nome da Fonte Original</a>
+                    </div>
                 </div>
                 
-                <!-- Conteúdo do artigo (inicialmente oculto) -->
-                <div id="article-content" class="article-content hidden">
-                    <!-- Cabeçalho do artigo -->
-                    <header class="article-header">
-                        <h1 id="article-title" class="article-title"></h1>
-                        
-                        <div class="article-meta">
-                            <div class="meta-item">
-                                <i class="fas fa-user"></i>
-                                <span id="article-author">Carregando...</span>
-                            </div>
-                            <div class="meta-item">
-                                <i class="fas fa-calendar"></i>
-                                <time id="article-date">00/00/0000</time>
-                            </div>
-                            <div class="meta-item">
-                                <i class="fas fa-link"></i>
-                                <span id="article-source">Fonte</span>
-                            </div>
-                            <div class="meta-item">
-                                <i class="fas fa-clock"></i>
-                                <span id="reading-time">5 min de leitura</span>
-                            </div>
-                        </div>
-                    </header>
-                    
-                    <!-- Imagem principal -->
-                    <figure class="article-featured-image">
-                        <img id="article-image" src="" alt="">
-                        <figcaption id="article-image-caption"></figcaption>
-                    </figure>
-                    
-                    <!-- Corpo do artigo -->
-                    <div id="article-body" class="article-body">
-                        <!-- Conteúdo dinâmico será injetado via JavaScript -->
-                    </div>
+                <div class="article-featured-image">
+                    <img src="assets/img/news-placeholder.jpg" alt="Corinthians no Mundial de Clubes">
+                    <div class="image-caption">Corinthians comemora mais uma conquista histórica</div>
                 </div>
-
-                <!-- Compartilhamento -->
+                
+                <div class="article-content">
+                    <p class="article-lead">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam in dui mauris. Vivamus hendrerit arcu sed erat molestie vehicula. Sed auctor neque eu tellus rhoncus ut eleifend nibh porttitor.</p>
+                    
+                    <p>Suspendisse in orci enim. Donec suscipit ante in hendrerit scelerisque. Fusce vitae orci eu orci placerat semper in nec ante. Maecenas et felis vitae turpis mollis dictum. Nullam fermentum ante vitae tortor fermentum ultrices.</p>
+                    
+                    <h2>Histórico do Corinthians em competições mundiais</h2>
+                    
+                    <p>Suspendisse potenti. Praesent nec justo ut ipsum tincidunt lacinia. Praesent faucibus justo in mi eleifend venenatis. Morbi metus nibh, aliquam non viverra in, egestas ut magna. Nam et velit eros. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Nam nec metus eu magna mollis sollicitudin.</p>
+                    
+                    <blockquote>
+                        "O Corinthians é uma equipe com tradição internacional e sua presença engrandece qualquer competição mundial." - Presidente da FIFA
+                    </blockquote>
+                    
+                    <p>Cras nec sodales sapien. Suspendisse quis vehicula mi. Nulla facilisi. Maecenas posuere tempus lectus, sit amet condimentum orci eleifend in. Vestibulum vestibulum dui lorem, in tempus velit efficitur eget.</p>
+                    
+                    <h2>O que esperar do torneio</h2>
+                    
+                    <p>Maecenas at odio in ex ullamcorper tincidunt. Integer id ornare risus, in luctus arcu. Quisque sit amet aliquet quam, sed imperdiet ante. Nunc facilisis risus at orci tincidunt, eget elementum mauris volutpat.</p>
+                    
+                    <ul>
+                        <li>24 equipes participantes</li>
+                        <li>Sede confirmada nos Estados Unidos</li>
+                        <li>Premiação recorde de US$ 50 milhões para o campeão</li>
+                        <li>Transmissão para mais de 150 países</li>
+                    </ul>
+                    
+                    <p>Proin tristique elit justo, vel posuere ligula pulvinar vitae. Ut quis molestie risus. Nam tristique elementum est, eu condimentum eros facilisis eget. Mauris dictum vestibulum diam, et dictum tortor.</p>
+                </div>
+                
+                <div class="article-tags">
+                    <span class="tags-title">Tags:</span>
+                    <ul class="tags-list">
+                        <li><a href="#">Corinthians</a></li>
+                        <li><a href="#">Mundial de Clubes</a></li>
+                        <li><a href="#">FIFA</a></li>
+                        <li><a href="#">Futebol Brasileiro</a></li>
+                    </ul>
+                </div>
+                
                 <div class="article-share">
-                    <h3><i class="fas fa-share-alt"></i> Compartilhe</h3>
+                    <span class="share-title">Compartilhe:</span>
                     <div class="share-buttons">
-                        <button class="share-btn facebook" aria-label="Compartilhar no Facebook">
+                        <a href="#" aria-label="Compartilhar no Facebook" class="btn-share facebook">
                             <i class="fab fa-facebook-f"></i>
-                        </button>
-                        <button class="share-btn twitter" aria-label="Compartilhar no Twitter">
+                        </a>
+                        <a href="#" aria-label="Compartilhar no Twitter" class="btn-share twitter">
                             <i class="fab fa-twitter"></i>
-                        </button>
-                        <button class="share-btn whatsapp" aria-label="Compartilhar no WhatsApp">
+                        </a>
+                        <a href="#" aria-label="Compartilhar no WhatsApp" class="btn-share whatsapp">
                             <i class="fab fa-whatsapp"></i>
-                        </button>
-                        <button class="share-btn linkedin" aria-label="Compartilhar no LinkedIn">
-                            <i class="fab fa-linkedin-in"></i>
-                        </button>
-                        <button class="share-btn copy-link" aria-label="Copiar link">
-                            <i class="fas fa-link"></i>
-                        </button>
+                        </a>
+                        <a href="#" aria-label="Compartilhar por Email" class="btn-share email">
+                            <i class="fas fa-envelope"></i>
+                        </a>
                     </div>
                 </div>
-
-                <!-- Notícias relacionadas -->
-                <section class="related-news">
-                    <h2 class="section-title"><i class="fas fa-newspaper"></i> Notícias Relacionadas</h2>
-                    <div class="related-grid" id="related-news-grid">
-                        <!-- Cards relacionados serão injetados via JavaScript -->
-                        <div class="skeleton-loader card-loader"></div>
-                        <div class="skeleton-loader card-loader"></div>
-                        <div class="skeleton-loader card-loader"></div>
-                    </div>
-                </section>
             </div>
         </article>
+        
+        <section class="suggested-news">
+            <div class="container">
+                <h2 class="section-heading">VOCÊ PODE SE INTERESSAR</h2>
+                
+                <div class="news-grid" id="suggested-news-container">
+                    <!-- As notícias sugeridas serão inseridas dinamicamente via JavaScript -->
+                    <div class="loading-container">
+                        <div class="loading-spinner"></div>
+                        <p>Carregando sugestões...</p>
+                    </div>
+                </div>
+            </div>
+        </section>
     </main>
+
+    <!-- Widget de Clima -->
+    <aside class="weather-widget">
+        <div class="weather-content">
+            <img src="https://openweathermap.org/img/wn/10d@2x.png" alt="Clima" class="weather-icon" id="weather-icon">
+            <div class="weather-info">
+                <div class="weather-city" id="weather-city">Manaus</div>
+                <span class="weather-temp" id="weather-temp">18°C</span>
+            </div>
+        </div>
+        <div class="weather-loading">Carregando</div>
+    </aside>
 
     <footer class="site-footer">
         <div class="container">
-            <div class="footer-grid">
-                <div class="footer-about">
-                    <img src="assets/img/logo-white.png" alt="Curumim News" class="footer-logo">
+            <div class="footer-content">
+                <div class="footer-logo">
+                    <img src="assets/img/curumimLogo.png" alt="Curumim News">
                     <p>O Curumim News é um portal de notícias independente comprometido com a verdade e a qualidade da informação.</p>
                 </div>
                 
                 <div class="footer-links">
-                    <h3>Links Rápidos</h3>
-                    <ul>
-                        <li><a href="/">Home</a></li>
-                        <li><a href="/curiosidades.html">Curiosidades</a></li>
-                        <li><a href="/sobre.html">Sobre</a></li>
-                        <li><a href="/admin/login.html">Área Administrativa</a></li>
-                    </ul>
-                </div>
-                
-                <div class="footer-social">
-                    <h3>Redes Sociais</h3>
-                    <div class="social-icons">
-                        <a href="#" aria-label="Facebook"><i class="fab fa-facebook"></i></a>
-                        <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
-                        <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
-                        <a href="#" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+                    <div class="footer-section">
+                        <h3>Links Rápidos</h3>
+                        <ul>
+                            <li><a href="/">Home</a></li>
+                            <li><a href="/curiosidades.html">Curiosidades</a></li>
+                            <li><a href="/sobre.html">Sobre</a></li>
+                        </ul>
+                    </div>
+                    
+                    <div class="footer-section">
+                        <h3>Categorias</h3>
+                        <ul>
+                            <li><a href="#">Política</a></li>
+                            <li><a href="#">Esportes</a></li>
+                            <li><a href="#">Entretenimento</a></li>
+                            <li><a href="#">Tecnologia</a></li>
+                        </ul>
+                    </div>
+                    
+                    <div class="footer-section">
+                        <h3>Institucional</h3>
+                        <ul>
+                            <li><a href="/sobre.html">Quem Somos</a></li>
+                            <li><a href="#">Política de Privacidade</a></li>
+                            <li><a href="#">Termos de Uso</a></li>
+                        </ul>
                     </div>
                 </div>
             </div>
             
-            <div class="copyright">
-                <p>&copy; 2023 Curumim News. Todos os direitos reservados.</p>
+            <div class="footer-bottom">
+                <div class="social-icons">
+                    <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                    <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                    <a href="#" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+                </div>
+                
+                <div class="copyright">
+                    <p>&copy; 2023 Curumim News. Todos os direitos reservados.</p>
+                </div>
             </div>
         </div>
     </footer>
 
-    <!-- Componente Toast para notificações -->
-    <div id="toast-container" class="toast-container"></div>
+    <!-- Toast para notificações -->
+    <div id="toast" class="toast"></div>
 
     <!-- Scripts -->
+    <script type="module" src="assets/js/api.js"></script>
     <script type="module" src="assets/js/main.js"></script>
     <script type="module" src="assets/js/noticia.js"></script>
 </body>

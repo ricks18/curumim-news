@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Curumim News - Curiosidades e fatos interessantes">
-    <title>Curiosidades | Curumim News</title>
+    <meta name="description" content="Curumim News - Resultados de Pesquisa">
+    <title>Resultados de Pesquisa | Curumim News</title>
     <link rel="stylesheet" href="assets/css/style.css">
     <link rel="stylesheet" href="assets/css/modern.css">
     <link rel="stylesheet" href="assets/css/novo-layout.css">
@@ -13,6 +13,117 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        /* Estilos específicos da página de pesquisa */
+        .search-results-header {
+            padding: 2rem 0;
+            border-bottom: 1px solid var(--cor-borda);
+        }
+        
+        .search-term {
+            font-weight: 700;
+            color: var(--verde-escuro);
+        }
+        
+        .search-results-count {
+            margin-top: 0.5rem;
+            color: var(--cor-texto-claro);
+            font-size: 0.9rem;
+        }
+        
+        .search-results-container {
+            padding: 2rem 0 4rem;
+        }
+        
+        .search-results-grid {
+            display: grid;
+            grid-template-columns: repeat(1, 1fr);
+            gap: 1.5rem;
+        }
+        
+        @media (min-width: 768px) {
+            .search-results-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        @media (min-width: 992px) {
+            .search-results-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+        
+        .search-pagination {
+            margin-top: 2rem;
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+        
+        .pagination-btn {
+            background-color: var(--cor-fundo-card);
+            border: 1px solid var(--cor-borda);
+            border-radius: 4px;
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .pagination-btn:hover, .pagination-btn.active {
+            background-color: var(--verde-claro);
+            border-color: var(--verde-claro);
+        }
+        
+        .pagination-btn.active {
+            font-weight: 700;
+        }
+        
+        .no-results {
+            text-align: center;
+            padding: 3rem 0;
+        }
+        
+        .no-results-icon {
+            font-size: 3rem;
+            color: var(--cor-texto-claro);
+            margin-bottom: 1rem;
+        }
+        
+        .no-results-title {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .no-results-message {
+            color: var(--cor-texto-claro);
+            max-width: 500px;
+            margin: 0 auto 1.5rem;
+        }
+        
+        .search-loading {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 3rem 0;
+        }
+        
+        .search-spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid rgba(0, 0, 0, 0.1);
+            border-radius: 50%;
+            border-top-color: var(--verde-escuro);
+            animation: spin 1s linear infinite;
+            margin-bottom: 1rem;
+        }
+        
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
 </head>
 <body>
     <header class="site-header">
@@ -23,7 +134,7 @@
             
             <div class="search-container">
                 <div class="search-box">
-                    <input type="text" placeholder="Pesquisar curiosidades..." aria-label="Pesquisar curiosidades">
+                    <input type="text" placeholder="Pesquisar notícias..." aria-label="Pesquisar notícias" id="search-input">
                     <button class="voice-search" aria-label="Pesquisa por voz">
                         <i class="fas fa-microphone"></i>
                     </button>
@@ -36,7 +147,7 @@
             <nav class="main-nav">
                 <ul class="nav-list">
                     <li><a href="/">NOTÍCIAS</a></li>
-                    <li><a href="/curiosidades.html" class="active">CURIOSIDADES</a></li>
+                    <li><a href="/curiosidades.html">CURIOSIDADES</a></li>
                     <li><a href="/sobre.html">SOBRE</a></li>
                 </ul>
             </nav>
@@ -48,59 +159,35 @@
     </header>
 
     <main>
-        <!-- Título da seção -->
-        <section class="latest-news-header">
+        <section class="search-results-header">
             <div class="container">
-                <h2 class="main-title">CURIOSIDADES</h2>
-                <p class="section-description">Fatos interessantes e informações surpreendentes do mundo todo.</p>
+                <h1>Resultados para: <span class="search-term" id="search-term-display"></span></h1>
+                <div class="search-results-count" id="search-count"></div>
             </div>
         </section>
         
-        <!-- Filtros e Busca -->
-        <section class="filters-section">
+        <section class="search-results-container">
             <div class="container">
-                <div class="filters-container">
-                    <div class="search-container secondary-search">
-                        <div class="search-box">
-                            <input type="text" id="search-curiosidades" placeholder="Pesquisar curiosidades..." aria-label="Pesquisar curiosidades">
-                            <button class="search-button" id="search-btn" aria-label="Buscar">
-                                <i class="fas fa-search"></i>
-                            </button>
-                        </div>
+                <div class="search-loading" id="search-loading">
+                    <div class="search-spinner"></div>
+                    <p>Buscando resultados...</p>
+                </div>
+                
+                <div class="search-results-grid" id="search-results">
+                    <!-- Os resultados da pesquisa serão inseridos aqui via JavaScript -->
+                </div>
+                
+                <div class="no-results" id="no-results" style="display: none;">
+                    <div class="no-results-icon">
+                        <i class="fas fa-search"></i>
                     </div>
-                    
-                    <div class="filter-dropdown">
-                        <select id="filter-date" class="filter-select" aria-label="Filtrar por data">
-                            <option value="newest">Mais recentes</option>
-                            <option value="oldest">Mais antigas</option>
-                        </select>
-                    </div>
-                </div>
-            </div>
-        </section>
-        
-        <!-- Conteúdo das Curiosidades -->
-        <section class="curiosidades-content">
-            <div class="container">
-                <div class="curiosidades-loading" id="curiosidades-loading">
-                    <p>Carregando curiosidades...</p>
+                    <h2 class="no-results-title">Nenhum resultado encontrado</h2>
+                    <p class="no-results-message">Não encontramos nenhuma notícia para o termo pesquisado. Tente usar palavras-chave diferentes ou verifique a ortografia.</p>
+                    <a href="/" class="btn-primary">Voltar para a página inicial</a>
                 </div>
                 
-                <div class="curiosidades-grid" id="curiosidades-container">
-                    <!-- Curiosidades serão injetadas via JavaScript -->
-                </div>
-                
-                <div class="load-more-container">
-                    <button id="load-more" class="btn-load-more">
-                        <span>Carregar mais</span>
-                        <i class="fas fa-spinner fa-spin hidden"></i>
-                    </button>
-                </div>
-                
-                <div class="share-curiosidade">
-                    <button id="share-btn" class="btn-primary">
-                        <i class="fas fa-lightbulb"></i> Compartilhar uma curiosidade
-                    </button>
+                <div class="search-pagination" id="search-pagination">
+                    <!-- Paginação será inserida aqui via JavaScript -->
                 </div>
             </div>
         </section>
@@ -117,36 +204,6 @@
         </div>
         <div class="weather-loading">Carregando</div>
     </aside>
-
-    <!-- Modal para envio de curiosidade -->
-    <div id="curiosidade-modal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>Compartilhar Curiosidade</h2>
-                <button class="close-modal" aria-label="Fechar">&times;</button>
-            </div>
-            <div class="modal-body">
-                <form id="curiosidade-form">
-                    <div class="form-group">
-                        <label for="curiosidade-nome">Seu nome</label>
-                        <input type="text" id="curiosidade-nome" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="curiosidade-email">Seu e-mail</label>
-                        <input type="email" id="curiosidade-email" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="curiosidade-texto">Curiosidade</label>
-                        <textarea id="curiosidade-texto" rows="5" required></textarea>
-                        <small>Máximo de 300 caracteres</small>
-                    </div>
-                    <div class="form-actions">
-                        <button type="submit" class="btn-submit">Enviar</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
 
     <footer class="site-footer">
         <div class="container">
@@ -208,7 +265,6 @@
     <!-- Scripts -->
     <script type="module" src="assets/js/api.js"></script>
     <script type="module" src="assets/js/main.js"></script>
-    <script type="module" src="assets/js/curiosidades.js"></script>
-    <script type="module" src="assets/js/novo-layout.js"></script>
+    <script type="module" src="assets/js/pesquisa.js"></script>
 </body>
 </html> 

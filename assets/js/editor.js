@@ -49,7 +49,7 @@ const initQuillEditor = () => {
   // Quando o conteúdo do editor mudar, atualize o textarea oculto
   // para que os dados sejam enviados com o formulário
   quillEditor.on('text-change', function() {
-    const editorContent = document.getElementById(editorType === 'post' ? 'post-corpo' : 'curiosidade-texto');
+    const editorContent = document.getElementById('post-corpo');
     if (editorContent) {
       editorContent.value = quillEditor.root.innerHTML;
     }
@@ -434,87 +434,87 @@ const loadContentForEditing = async () => {
 };
 
 /**
- * Inicializa o formulário de edição e seus manipuladores
+ * Inicializa o formulário de editor e seus eventos
  */
 const initEditorForm = () => {
   const form = document.getElementById('editor-form');
   
-  if (!form) return;
-  
-  form.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    
-    // Validar o formulário
-    if (!validateEditorForm()) {
-      return;
-    }
-    
-    // Coletar dados do formulário
-    const formData = collectFormData();
-    
-    // Mostrar loader
-    Loader.show('Salvando...');
-    
-    try {
-      let result;
+  if (form) {
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault(); // Impede o envio padrão do formulário
       
-      if (editorMode === 'create') {
-        // Criar novo item
-        if (editorType === 'post') {
-          result = await api.posts.create(formData);
-        } else {
-          result = await api.curiosidades.create(formData);
-        }
-        
-        if (!result.success) {
-          throw new Error(`Erro ao criar ${editorType === 'post' ? 'notícia' : 'curiosidade'}: ${result.error}`);
-        }
-        
-        Toast.show(`${editorType === 'post' ? 'Notícia' : 'Curiosidade'} criada com sucesso!`, 'success');
-      } else {
-        // Atualizar item existente
-        if (editorType === 'post') {
-          result = await api.posts.update(editorId, formData);
-        } else {
-          result = await api.curiosidades.update(editorId, formData);
-        }
-        
-        if (!result.success) {
-          throw new Error(`Erro ao atualizar ${editorType === 'post' ? 'notícia' : 'curiosidade'}: ${result.error}`);
-        }
-        
-        Toast.show(`${editorType === 'post' ? 'Notícia' : 'Curiosidade'} atualizada com sucesso!`, 'success');
+      // Validar o formulário
+      if (!validateEditorForm()) {
+        return;
       }
       
-      // Redirecionar para o dashboard após sucesso
-      setTimeout(() => {
-        window.location.href = `/admin/dashboard.html?tab=${editorType === 'post' ? 'noticias' : 'curiosidades'}-tab`;
-      }, 1500);
-    } catch (error) {
-      console.error('Erro ao salvar conteúdo:', error);
-      Toast.show(`Erro ao salvar conteúdo: ${error.message}`, 'error');
-    } finally {
-      Loader.hide();
-    }
-  });
-  
-  // Adicionar listener para botão de cancelar
-  const cancelBtn = document.getElementById('btn-cancelar');
-  if (cancelBtn) {
-    cancelBtn.addEventListener('click', (e) => {
-      e.preventDefault();
+      // Mostrar loader
+      Loader.show('Salvando...');
       
-      // Confirmar antes de sair sem salvar
-      if (formHasChanges()) {
-        const confirmation = confirm('Você tem alterações não salvas. Deseja realmente sair?');
-        if (!confirmation) {
-          return;
+      try {
+        // Coletar dados do formulário
+        const formData = collectFormData();
+        
+        // Log para debug
+        console.log('Dados do formulário:', formData);
+        
+        // Determinar o endpoint correto com base no tipo de conteúdo
+        const endpoint = editorType === 'post' ? 'posts' : 'curiosidades';
+        
+        // Enviar dados para a API
+        let response;
+        
+        if (editorMode === 'create') {
+          // Criar novo conteúdo
+          response = await api.data.create(endpoint, formData);
+        } else {
+          // Atualizar conteúdo existente
+          response = await api.data.update(endpoint, editorId, formData);
         }
+        
+        // Verificar se a operação foi bem-sucedida
+        if (response.success) {
+          Toast.show(
+            editorMode === 'create'
+              ? `${editorType === 'post' ? 'Notícia' : 'Curiosidade'} criada com sucesso!`
+              : `${editorType === 'post' ? 'Notícia' : 'Curiosidade'} atualizada com sucesso!`,
+            'success'
+          );
+          
+          // Redirecionar após um pequeno delay
+          setTimeout(() => {
+            window.location.href = `/admin/dashboard.html?tab=${editorType === 'post' ? 'noticias' : 'curiosidades'}-tab`;
+          }, 1500);
+        } else {
+          throw new Error(response.error || 'Erro desconhecido');
+        }
+      } catch (error) {
+        console.error('Erro ao salvar:', error);
+        Toast.show(`Erro ao salvar: ${error.message}`, 'error');
+      } finally {
+        Loader.hide();
       }
-      
-      // Redirecionar para o dashboard
-      window.location.href = `/admin/dashboard.html?tab=${editorType === 'post' ? 'noticias' : 'curiosidades'}-tab`;
     });
+    
+    // Evento de cancelar
+    const btnCancelar = document.getElementById('btn-cancelar');
+    if (btnCancelar) {
+      btnCancelar.addEventListener('click', () => {
+        // Se houver alterações não salvas, mostrar confirmação
+        if (formHasChanges()) {
+          Modal.confirm(
+            'Existem alterações não salvas. Deseja realmente sair?',
+            () => {
+              // Redirecionar para o dashboard
+              window.location.href = `/admin/dashboard.html?tab=${editorType === 'post' ? 'noticias' : 'curiosidades'}-tab`;
+            }
+          );
+        } else {
+          // Redirecionar diretamente
+          window.location.href = `/admin/dashboard.html?tab=${editorType === 'post' ? 'noticias' : 'curiosidades'}-tab`;
+        }
+      });
+    }
   }
 };
 
@@ -687,10 +687,15 @@ const initEditorPage = async () => {
   if (editorModeInput) editorModeInput.value = editorMode;
   
   // Inicializar componentes do editor
-  initQuillEditor();
+  // Inicializa o editor Quill apenas para posts, não para curiosidades
+  if (editorType === 'post') {
+    initQuillEditor();
+    initSlugGenerator();
+    initImageUpload();
+  }
+  
+  // Inicializa contadores de caracteres para ambos os tipos
   initCharCounters();
-  initSlugGenerator();
-  initImageUpload();
   
   // Se estamos no modo edição, carregar dados
   if (editorMode === 'edit' && editorId) {

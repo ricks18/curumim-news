@@ -9,6 +9,30 @@
     <link rel="icon" type="image/png" href="../assets/img/favicon.png">
     <!-- Font Awesome para ícones -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Correções para o tema escuro */
+        [data-theme="dark"] {
+            --cor-texto: #E0E0E0 !important;
+        }
+        
+        [data-theme="dark"] .stat-info h3,
+        [data-theme="dark"] .stat-number,
+        [data-theme="dark"] .stat-change,
+        [data-theme="dark"] table th,
+        [data-theme="dark"] table td,
+        [data-theme="dark"] .panel-header h2,
+        [data-theme="dark"] .form-group label,
+        [data-theme="dark"] .modal-header h2,
+        [data-theme="dark"] .modal-body p {
+            color: var(--cor-texto) !important;
+        }
+        
+        [data-theme="dark"] .form-control,
+        [data-theme="dark"] .search-filter input {
+            color: var(--cor-texto) !important;
+            background-color: var(--cinza-claro) !important;
+        }
+    </style>
 </head>
 <body class="admin-page admin-dashboard">
     <div class="admin-wrapper">
@@ -16,7 +40,7 @@
         <aside class="admin-sidebar">
             <div class="sidebar-header">
                 <a href="/" class="admin-logo">
-                    <img src="../assets/img/logo.png" alt="Curumim News Logo">
+                    <img src="../assets/img/curumimLogo.png" alt="Curumim News Logo">
                 </a>
                 <button class="sidebar-toggle" aria-label="Fechar menu">
                     <i class="fas fa-times"></i>

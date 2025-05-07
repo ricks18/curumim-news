@@ -386,10 +386,10 @@ const api = {
      * Obtém lista de curiosidades com paginação
      * @param {number} page - Número da página
      * @param {number} limit - Limite de itens por página
-     * @param {string} sortOrder - Ordem de classificação (newest/oldest)
+     * @param {string} order - Ordem de classificação ('asc' ou 'desc')
      * @returns {Promise} Resultado da operação com dados
      */
-    getList: async (page = 1, limit = 10, sortOrder = 'newest') => {
+    getList: async (page = 1, limit = 6, order = 'desc') => {
       try {
         const from = (page - 1) * limit;
         const to = from + limit - 1;
@@ -397,7 +397,7 @@ const api = {
         const { data, error, count } = await supabase
           .from('curiosidades')
           .select('*', { count: 'exact' })
-          .order('data', { ascending: sortOrder === 'oldest' })
+          .order('data', { ascending: order === 'asc' })
           .range(from, to);
           
         if (error) throw error;
@@ -421,29 +421,40 @@ const api = {
     /**
      * Busca curiosidades por termo de pesquisa
      * @param {string} searchTerm - Termo para busca
-     * @param {number} limit - Limite de resultados
+     * @param {number} page - Número da página
+     * @param {number} limit - Limite de itens por página
+     * @param {string} order - Ordem de classificação ('asc' ou 'desc')
      * @returns {Promise} Resultado da operação com dados
      */
-    search: async (searchTerm, limit = 20) => {
+    search: async (searchTerm, page = 1, limit = 10, order = 'desc') => {
       try {
         if (!searchTerm || searchTerm.trim() === '') {
-          return await api.curiosidades.getList(1, limit);
+          return await api.curiosidades.getList(page, limit, order);
         }
         
-        // Busca por texto da curiosidade
-        const { data, error } = await supabase
+        const from = (page - 1) * limit;
+        const to = from + limit - 1;
+        
+        // Busca por texto
+        const { data, error, count } = await supabase
           .from('curiosidades')
-          .select('*')
+          .select('*', { count: 'exact' })
           .ilike('texto', `%${searchTerm}%`)
-          .order('data', { ascending: false })
-          .limit(limit);
+          .order('data', { ascending: order === 'asc' })
+          .range(from, to);
           
         if (error) throw error;
         
         return { 
           success: true, 
-          data, 
-          searchTerm
+          data,
+          searchTerm,
+          pagination: {
+            page,
+            limit,
+            total: count || 0,
+            totalPages: Math.ceil((count || 0) / limit)
+          }
         };
       } catch (error) {
         console.error(`Erro ao buscar curiosidades com termo "${searchTerm}":`, error);
@@ -536,19 +547,26 @@ const api = {
 
     /**
      * Envia uma sugestão de curiosidade
-     * @param {object} sugestao - Dados da sugestão
+     * @param {Object} data - Dados da sugestão (nome, email, texto)
      * @returns {Promise} Resultado da operação
      */
-    enviarSugestao: async (sugestao) => {
+    submitSuggestion: async (data) => {
       try {
-        const { data, error } = await supabase
+        const { error } = await supabase
           .from('sugestoes_curiosidades')
-          .insert([sugestao]);
+          .insert([
+            { 
+              nome: data.nome,
+              email: data.email,
+              texto: data.texto,
+              data_sugestao: new Date().toISOString()
+            }
+          ]);
           
         if (error) throw error;
         return { success: true };
       } catch (error) {
-        console.error('Erro ao enviar sugestão:', error);
+        console.error('Erro ao enviar sugestão de curiosidade:', error);
         return { success: false, error: error.message };
       }
     },
@@ -721,6 +739,54 @@ const api = {
   },
 
   /**
+   * Operações genéricas de dados
+   */
+  data: {
+    /**
+     * Cria um novo registro em uma tabela específica
+     * @param {string} endpoint - Nome da tabela/recurso ('posts' ou 'curiosidades')
+     * @param {object} data - Dados a serem inseridos
+     * @returns {Promise} Resultado da operação
+     */
+    create: async (endpoint, data) => {
+      try {
+        if (endpoint === 'posts') {
+          return await api.posts.create(data);
+        } else if (endpoint === 'curiosidades') {
+          return await api.curiosidades.create(data);
+        } else {
+          throw new Error(`Endpoint não suportado: ${endpoint}`);
+        }
+      } catch (error) {
+        console.error(`Erro ao criar ${endpoint}:`, error);
+        return { success: false, error: error.message };
+      }
+    },
+
+    /**
+     * Atualiza um registro existente em uma tabela específica
+     * @param {string} endpoint - Nome da tabela/recurso ('posts' ou 'curiosidades')
+     * @param {number} id - ID do registro
+     * @param {object} data - Dados atualizados
+     * @returns {Promise} Resultado da operação
+     */
+    update: async (endpoint, id, data) => {
+      try {
+        if (endpoint === 'posts') {
+          return await api.posts.update(id, data);
+        } else if (endpoint === 'curiosidades') {
+          return await api.curiosidades.update(id, data);
+        } else {
+          throw new Error(`Endpoint não suportado: ${endpoint}`);
+        }
+      } catch (error) {
+        console.error(`Erro ao atualizar ${endpoint} ${id}:`, error);
+        return { success: false, error: error.message };
+      }
+    }
+  },
+
+  /**
    * Estatísticas para o Dashboard
    */
   stats: {
@@ -763,35 +829,57 @@ const api = {
           
         if (errorCuriosidadesNoMes) throw errorCuriosidadesNoMes;
 
-        // Contagem de visualizações (usando tabela de analytics se existir)
+        // Contagem real de visualizações - tenta obter da tabela views
+        // Se falhar, cria a tabela e retorna 0 temporariamente
         let totalViews = 0;
         let viewsNoMes = 0;
         let viewsPercentual = 0;
         
         try {
-          // Verificar se existe tabela de analytics
+          // Verificar se a tabela views existe e tentar contar visualizações totais
           const { count: totalViewsCount, error: viewsError } = await supabase
             .from('views')
             .select('*', { count: 'exact', head: true });
             
           if (!viewsError) {
-            totalViews = totalViewsCount;
+            totalViews = totalViewsCount || 0;
             
-            // Views deste mês
-            const { count: viewsNoMesCount } = await supabase
+            // Contar visualizações deste mês
+            const { count: viewsNoMesCount, error: viewsNoMesError } = await supabase
               .from('views')
               .select('*', { count: 'exact', head: true })
               .gte('created_at', dataInicio.toISOString());
               
-            viewsNoMes = viewsNoMesCount;
-            viewsPercentual = totalViews > 0 ? (viewsNoMes / totalViews) * 100 : 0;
+            if (!viewsNoMesError) {
+              viewsNoMes = viewsNoMesCount || 0;
+              
+              // Calcular percentual de crescimento
+              const mesAnterior = new Date(dataInicio);
+              mesAnterior.setMonth(mesAnterior.getMonth() - 1);
+              
+              const { count: viewsMesAnteriorCount, error: viewsMesAnteriorError } = await supabase
+                .from('views')
+                .select('*', { count: 'exact', head: true })
+                .gte('created_at', mesAnterior.toISOString())
+                .lt('created_at', dataInicio.toISOString());
+                
+              if (!viewsMesAnteriorError && viewsMesAnteriorCount > 0) {
+                viewsPercentual = Math.round((viewsNoMes / viewsMesAnteriorCount) * 100) - 100;
+              } else {
+                viewsPercentual = viewsNoMes > 0 ? 100 : 0; // 100% de crescimento se antes era 0
+              }
+            }
           }
-        } catch (viewsErr) {
-          console.log('Analytics table might not exist, using fallback:', viewsErr);
-          // Se não existir, usa contagem básica baseada em posts (1 view mínimo por post)
-          totalViews = totalNoticias * 5; // Simulação simples: média de 5 views por notícia
-          viewsNoMes = noticiasNoMes * 8; // Simulação: posts recentes têm mais views (8 por post)
-          viewsPercentual = 15; // Crescimento padrão de 15%
+        } catch (viewsError) {
+          console.log('Erro ao buscar visualizações, tentando criar tabela:', viewsError);
+          
+          // Tentar criar a tabela views
+          await api.stats.setupViewsTable();
+          
+          // Inicializar com valores zerados
+          totalViews = 0;
+          viewsNoMes = 0;
+          viewsPercentual = 0;
         }
         
         return { 
@@ -816,6 +904,112 @@ const api = {
         };
       } catch (error) {
         console.error('Erro ao buscar estatísticas:', error);
+        return { success: false, error: error.message };
+      }
+    },
+    
+    /**
+     * Cria a tabela de visualizações no Supabase se ela não existir
+     * @returns {Promise} Resultado da operação
+     */
+    setupViewsTable: async () => {
+      try {
+        // Verificar se a tabela views existe
+        const { error: checkError } = await supabase
+          .from('views')
+          .select('id', { count: 'exact', head: true });
+        
+        // Se não houver erro, a tabela já existe
+        if (!checkError) {
+          console.log('Tabela views já existe');
+          return { success: true, message: 'Tabela views já existe' };
+        }
+        
+        // O erro indica que a tabela não existe, vamos tentando criá-la
+        console.error('Erro na verificação da tabela views:', checkError);
+        
+        // Tentar criar a tabela - método 1: inserindo um registro
+        try {
+          console.log('Tentando criar tabela views inserindo um registro inicial...');
+          const { error: insertError } = await supabase
+            .from('views')
+            .insert({
+              conteudo_id: 1,
+              tipo_conteudo: 'system_init',
+              created_at: new Date().toISOString()
+            });
+            
+          if (!insertError) {
+            console.log('Tabela views inicializada com sucesso via insert');
+            return { success: true, message: 'Tabela views inicializada com sucesso' };
+          }
+          console.error('Erro ao inserir registro inicial:', insertError);
+        } catch (insertError) {
+          console.error('Exceção ao tentar inserir registro inicial:', insertError);
+        }
+        
+        // A tabela ainda não existe, precisamos criá-la de outra forma
+        console.log('Tentando criar tabela views usando uma função serverless...');
+        try {
+          // Chamar uma função que deve estar configurada no Supabase Functions
+          const { error: functionError } = await supabase.functions.invoke('create-views-table', {});
+          
+          if (!functionError) {
+            console.log('Tabela views criada com sucesso via função serverless');
+            return { success: true, message: 'Tabela views criada com sucesso via função' };
+          }
+          console.error('Erro ao chamar função serverless:', functionError);
+        } catch (functionError) {
+          console.error('Exceção ao chamar função serverless:', functionError);
+        }
+        
+        // Se chegamos aqui, todas as tentativas falharam
+        console.error('Não foi possível criar a tabela views automaticamente');
+        return { 
+          success: false, 
+          error: 'A tabela de visualizações não pôde ser criada automaticamente. Entre em contato com o administrador.' 
+        };
+      } catch (error) {
+        console.error('Erro ao configurar tabela views:', error);
+        return { success: false, error: error.message };
+      }
+    },
+    
+    /**
+     * Registra uma visualização para um conteúdo
+     * @param {string} conteudoId - ID do conteúdo visualizado
+     * @param {string} tipo - Tipo de conteúdo ('post' ou 'curiosidade')
+     * @returns {Promise} Resultado da operação
+     */
+    registrarVisualizacao: async (conteudoId, tipo) => {
+      try {
+        // Registro simplificado de visualização
+        const { error } = await supabase
+          .from('views')
+          .insert({
+            conteudo_id: conteudoId,
+            tipo_conteudo: tipo,
+            created_at: new Date().toISOString()
+          });
+        
+        if (error) {
+          // Se a tabela não existir, vamos tentar criá-la e então tentar novamente
+          if (error.code === '42P01') { // código para "relation does not exist"
+            const setupResult = await api.stats.setupViewsTable();
+            
+            if (setupResult.success) {
+              // Tentar inserir novamente
+              return await api.stats.registrarVisualizacao(conteudoId, tipo);
+            }
+          }
+          
+          console.error('Erro ao registrar visualização:', error);
+          return { success: false, error: error.message };
+        }
+        
+        return { success: true };
+      } catch (error) {
+        console.error('Erro ao registrar visualização:', error);
         return { success: false, error: error.message };
       }
     }

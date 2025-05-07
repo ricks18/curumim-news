@@ -8,6 +8,152 @@
 // Importação do módulo de API
 import api from './api.js';
 
+// Inicializar funcionalidades globais quando o DOM estiver carregado
+document.addEventListener('DOMContentLoaded', () => {
+  // Inicializar componentes
+  ThemeManager.init();
+  setupSearch();
+  setupAdminAccess();
+  
+  // Inicializar outros módulos conforme necessário
+  if (document.querySelector('.toast')) {
+    Toast.init();
+  }
+  
+  if (document.querySelector('.dropdown')) {
+    Dropdown.init();
+  }
+  
+  if (document.querySelector('.modal')) {
+    Modal.init();
+  }
+  
+  if (document.querySelector('.newsletter-form')) {
+    Newsletter.init();
+  }
+});
+
+/**
+ * Configura a funcionalidade de pesquisa
+ */
+function setupSearch() {
+  const searchInput = document.querySelector('.search-box input');
+  const searchButton = document.querySelector('.search-button');
+  const voiceSearchButton = document.querySelector('.voice-search');
+  
+  if (!searchInput || !searchButton) return;
+  
+  // Função para executar a pesquisa
+  const executeSearch = () => {
+    const term = searchInput.value.trim();
+    
+    if (term) {
+      // Redirecionar para a página de resultados com o termo de busca
+      window.location.href = `/pesquisa.html?q=${encodeURIComponent(term)}`;
+    }
+  };
+  
+  // Adicionar ouvinte para o botão de pesquisa
+  searchButton.addEventListener('click', executeSearch);
+  
+  // Adicionar ouvinte para tecla Enter no input
+  searchInput.addEventListener('keyup', (e) => {
+    if (e.key === 'Enter') {
+      executeSearch();
+    }
+  });
+  
+  // Adicionar ouvinte para pesquisa por voz (se disponível)
+  if (voiceSearchButton && 'webkitSpeechRecognition' in window) {
+    voiceSearchButton.addEventListener('click', () => {
+      const recognition = new webkitSpeechRecognition();
+      recognition.lang = 'pt-BR';
+      
+      // Feedback visual
+      voiceSearchButton.classList.add('listening');
+      Toast.show('Fale agora...', 'info');
+      
+      recognition.onresult = (event) => {
+        const transcript = event.results[0][0].transcript;
+        searchInput.value = transcript;
+        
+        // Pequeno delay para melhor experiência do usuário
+        setTimeout(executeSearch, 500);
+      };
+      
+      recognition.onerror = () => {
+        Toast.show('Não foi possível reconhecer a fala', 'error');
+        voiceSearchButton.classList.remove('listening');
+      };
+      
+      recognition.onend = () => {
+        voiceSearchButton.classList.remove('listening');
+      };
+      
+      recognition.start();
+    });
+  } else if (voiceSearchButton) {
+    // Esconder botão se a API não estiver disponível
+    voiceSearchButton.style.display = 'none';
+  }
+}
+
+/**
+ * Configura acesso secreto à área administrativa
+ * Utilize Ctrl+Alt+A para acessar
+ */
+function setupAdminAccess() {
+  const keys = {
+    ctrl: false,
+    alt: false,
+    a: false
+  };
+  
+  document.addEventListener('keydown', function(event) {
+    // Atualizar estado das teclas
+    if (event.key === 'Control') keys.ctrl = true;
+    if (event.key === 'Alt') keys.alt = true;
+    if (event.key.toLowerCase() === 'a') keys.a = true;
+    
+    // Verificar combinação Ctrl+Alt+A
+    if (keys.ctrl && keys.alt && keys.a) {
+      // Redirecionar para a página de login admin
+      window.location.href = '/admin/login.html';
+    }
+  });
+  
+  document.addEventListener('keyup', function(event) {
+    // Resetar estado das teclas ao soltar
+    if (event.key === 'Control') keys.ctrl = false;
+    if (event.key === 'Alt') keys.alt = false;
+    if (event.key.toLowerCase() === 'a') keys.a = false;
+  });
+  
+  // Adicionar link oculto no rodapé que só aparece ao passar o mouse
+  const footerLinks = document.querySelector('.footer-section:nth-child(3) ul');
+  if (footerLinks) {
+    const adminLink = document.createElement('li');
+    adminLink.className = 'hidden-admin-link';
+    adminLink.innerHTML = '<a href="/admin/login.html">Área Administrativa</a>';
+    adminLink.style.opacity = '0';
+    adminLink.style.transition = 'opacity 0.3s ease';
+    
+    // Mostrar ao passar o mouse no footer
+    const footer = document.querySelector('.site-footer');
+    if (footer) {
+      footer.addEventListener('mouseover', function() {
+        adminLink.style.opacity = '0.5';
+      });
+      
+      footer.addEventListener('mouseout', function() {
+        adminLink.style.opacity = '0';
+      });
+    }
+    
+    footerLinks.appendChild(adminLink);
+  }
+}
+
 // ----------------
 // Utilitários
 // ----------------
@@ -244,11 +390,15 @@ export const ThemeManager = {
    * Alterna entre temas claro e escuro
    */
   toggleTheme() {
-    const currentTheme = document.documentElement.getAttribute('data-theme');
+    const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
     const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
     
+    console.log(`Alternando tema: ${currentTheme} -> ${newTheme}`);
     this.setTheme(newTheme);
     localStorage.setItem(this.STORAGE_KEY, newTheme);
+    
+    // Evento personalizado para notificar outras partes da aplicação
+    document.dispatchEvent(new CustomEvent('themeChanged', { detail: { theme: newTheme } }));
   },
   
   /**
@@ -269,6 +419,11 @@ export const ThemeManager = {
         icon.classList.add('fa-moon');
       }
     });
+    
+    // Salvar no localStorage para persistência
+    localStorage.setItem(this.STORAGE_KEY, theme);
+    
+    console.log(`Tema definido para: ${theme}`);
   },
   
   /**
@@ -288,6 +443,14 @@ export const ThemeManager = {
  * Gerenciador de notificações Toast
  */
 export const Toast = {
+  /**
+   * Inicializa o componente Toast
+   */
+  init() {
+    // Toast não precisa de inicialização específica
+    console.log('Toast inicializado');
+  },
+
   /**
    * Mostra uma mensagem toast
    * @param {string} message - Mensagem a ser exibida
@@ -761,16 +924,4 @@ export const Newsletter = {
 // Inicialização
 // ----------------
 
-/**
- * Função de inicialização que roda quando o DOM está pronto
- */
-document.addEventListener('DOMContentLoaded', () => {
-  // Inicializar componentes
-  ThemeManager.init();
-  MobileNav.init();
-  Toast.init();
-  Modal.init();
-  Newsletter.init();
-  
-  console.log('Curumim News - Inicializado com sucesso');
-}); 
+console.log('Curumim News - Inicializado com sucesso'); 

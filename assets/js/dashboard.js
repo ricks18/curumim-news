@@ -19,8 +19,8 @@ const loadDashboardStats = async () => {
       document.getElementById('total-curiosidades').textContent = data.curiosidades.total || '0';
       document.getElementById('curiosidades-change').textContent = `${data.curiosidades.percentualCrescimento.toFixed(0)}%`;
 
-      document.getElementById('total-views').textContent = data.views?.total || 'N/A'; 
-      document.getElementById('views-change').textContent = data.views?.percentualCrescimento ? `${data.views.percentualCrescimento.toFixed(0)}%` : 'N/A';
+      document.getElementById('total-views').textContent = data.views.total || '0';
+      document.getElementById('views-change').textContent = `${data.views.percentualCrescimento.toFixed(0)}%`;
       
       document.getElementById('total-admins').textContent = '1'; // Mantendo o valor fixo por enquanto
       document.getElementById('admins-change').textContent = '0%';
@@ -32,12 +32,14 @@ const loadDashboardStats = async () => {
       // Preencher com 'Erro' ou manter os zeros em caso de falha
       document.getElementById('total-noticias').textContent = '-';
       document.getElementById('total-curiosidades').textContent = '-';
+      document.getElementById('total-views').textContent = '-';
     }
   } catch (err) {
     console.error('loadDashboardStats: Erro catastrófico ao buscar estatísticas:', err);
     Toast.show('Erro grave ao carregar dados do dashboard.', 'error');
     document.getElementById('total-noticias').textContent = '!';
     document.getElementById('total-curiosidades').textContent = '!';
+    document.getElementById('total-views').textContent = '!';
   }
 };
 

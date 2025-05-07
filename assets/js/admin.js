@@ -769,7 +769,7 @@ const loadNewsTable = async () => {
             <a href="/admin/editor.html?mode=edit&type=post&id=${item.id}" class="btn-icon edit" title="Editar">
               <i class="fas fa-edit"></i>
             </a>
-            <a href="/noticia.html?id=${item.slug}" target="_blank" class="btn-icon view" title="Visualizar">
+            <a href="/noticia.html?slug=${item.slug}" target="_blank" class="btn-icon view" title="Visualizar">
               <i class="fas fa-eye"></i>
             </a>
             <button class="btn-icon delete" title="Excluir" data-id="${item.id}" data-type="post">

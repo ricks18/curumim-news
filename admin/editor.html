@@ -11,6 +11,40 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Quill.js para editor WYSIWYG -->
     <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+    <style>
+        /* Correções para o tema escuro */
+        [data-theme="dark"] {
+            --cor-texto: #E0E0E0 !important;
+        }
+        
+        [data-theme="dark"] .stat-info h3,
+        [data-theme="dark"] .stat-number,
+        [data-theme="dark"] .stat-change,
+        [data-theme="dark"] table th,
+        [data-theme="dark"] table td,
+        [data-theme="dark"] .panel-header h2,
+        [data-theme="dark"] .form-group label,
+        [data-theme="dark"] .modal-header h2,
+        [data-theme="dark"] .modal-body p {
+            color: var(--cor-texto) !important;
+        }
+        
+        [data-theme="dark"] .form-control,
+        [data-theme="dark"] .search-filter input {
+            color: var(--cor-texto) !important;
+            background-color: var(--cinza-claro) !important;
+        }
+        
+        [data-theme="dark"] .ql-editor {
+            color: var(--cor-texto) !important;
+            background-color: var(--cinza-claro) !important;
+        }
+        
+        [data-theme="dark"] .ql-toolbar {
+            background-color: var(--cinza-medio-dark) !important;
+            border-color: var(--cor-borda) !important;
+        }
+    </style>
 </head>
 <body class="admin-page admin-editor">
     <div class="admin-wrapper">
@@ -135,7 +169,7 @@
             
             <!-- Conteúdo do Editor -->
             <div class="editor-content">
-                <form id="editor-form" class="editor-form">
+                <form id="editor-form" class="editor-form" novalidate>
                     <input type="hidden" id="editor-id">
                     <input type="hidden" id="editor-type">
                     <input type="hidden" id="editor-mode">
@@ -145,7 +179,7 @@
                         <div class="form-row">
                             <div class="form-group full-width">
                                 <label for="post-title">Título da Notícia</label>
-                                <input type="text" id="post-title" name="titulo" required placeholder="Digite o título da notícia">
+                                <input type="text" id="post-title" name="titulo" placeholder="Digite o título da notícia">
                             </div>
                         </div>
                         
@@ -154,7 +188,7 @@
                                 <label for="post-slug">Slug</label>
                                 <div class="input-with-icon">
                                     <i class="fas fa-link"></i>
-                                    <input type="text" id="post-slug" name="slug" required placeholder="titulo-da-noticia">
+                                    <input type="text" id="post-slug" name="slug" placeholder="titulo-da-noticia">
                                     <button type="button" id="gerar-slug" class="btn-icon" aria-label="Gerar slug automaticamente">
                                         <i class="fas fa-sync-alt"></i>
                                     </button>
@@ -175,7 +209,7 @@
                         <div class="form-row">
                             <div class="form-group full-width">
                                 <label for="post-resumo">Resumo</label>
-                                <textarea id="post-resumo" name="resumo" rows="3" required placeholder="Breve resumo da notícia (máximo 200 caracteres)"></textarea>
+                                <textarea id="post-resumo" name="resumo" rows="3" placeholder="Breve resumo da notícia (máximo 200 caracteres)"></textarea>
                                 <div class="char-counter">
                                     <span id="resumo-counter">0</span>/200
                                 </div>
@@ -187,7 +221,7 @@
                                 <label for="post-data">Data de Publicação</label>
                                 <div class="input-with-icon">
                                     <i class="fas fa-calendar"></i>
-                                    <input type="datetime-local" id="post-data" name="data_publicacao" required>
+                                    <input type="datetime-local" id="post-data" name="data_publicacao">
                                 </div>
                             </div>
                             
@@ -249,7 +283,7 @@
                         <div class="form-row">
                             <div class="form-group full-width">
                                 <label for="curiosidade-texto">Texto da Curiosidade</label>
-                                <textarea id="curiosidade-texto" name="texto" rows="5" required placeholder="Digite a curiosidade (máximo 500 caracteres)"></textarea>
+                                <textarea id="curiosidade-texto" name="texto" rows="5" placeholder="Digite a curiosidade (máximo 500 caracteres)"></textarea>
                                 <div class="char-counter">
                                     <span id="curiosidade-counter">0</span>/500
                                 </div>
@@ -261,7 +295,7 @@
                                 <label for="curiosidade-data">Data de Publicação</label>
                                 <div class="input-with-icon">
                                     <i class="fas fa-calendar"></i>
-                                    <input type="datetime-local" id="curiosidade-data" name="data" required>
+                                    <input type="datetime-local" id="curiosidade-data" name="data">
                                 </div>
                             </div>
                             
