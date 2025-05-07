@@ -3,13 +3,6 @@ import { Utils, Toast, Modal, Loader } from './main.js'; // Supondo que Modal e 
 
 console.log('admin.js carregado');
 
-// Variáveis globais para o editor
-let quillEditor;    // Instância do editor Quill
-let editorMode;    // 'create' ou 'edit'
-let editorType;    // 'post' ou 'curiosidade'
-let editorId;      // ID do item em edição (se aplicável)
-let currentImagePath; // Caminho da imagem atual no storage (se aplicável)
-
 /**
  * Verifica o status de autenticação do usuário.
  * Redireciona para a página de login se não estiver autenticado,
@@ -344,429 +337,13 @@ const handleThemeToggle = () => {
 const initAdminUIComponents = () => {
   console.log('Inicializando componentes de UI administrativa');
   handleSidebarToggle();
-  handleTabs();
-  handleSubmenus();
+  handleTabs(); // Adicionado para garantir que as abas funcionem em todas as páginas admin
+  handleSubmenus(); // Adicionado para garantir que os submenus funcionem
   handleThemeToggle();
-};
-
-/**
- * Inicializa o Editor Quill para WYSIWYG
- */
-const initQuillEditor = () => {
-  if (!document.getElementById('editor-container')) return;
-  
-  // Definir as opções e ferramentas do editor
-  const toolbarOptions = [
-    ['bold', 'italic', 'underline', 'strike'],
-    ['blockquote', 'code-block'],
-    [{ 'header': 1 }, { 'header': 2 }],
-    [{ 'list': 'ordered' }, { 'list': 'bullet' }],
-    [{ 'script': 'sub' }, { 'script': 'super' }],
-    [{ 'indent': '-1' }, { 'indent': '+1' }],
-    [{ 'direction': 'rtl' }],
-    [{ 'size': ['small', false, 'large', 'huge'] }],
-    [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
-    [{ 'color': [] }, { 'background': [] }],
-    [{ 'font': [] }],
-    [{ 'align': [] }],
-    ['clean'],
-    ['link', 'image']
-  ];
-
-  // Inicializar o editor Quill
-  quillEditor = new Quill('#editor-container', {
-    modules: {
-      toolbar: toolbarOptions
-    },
-    theme: 'snow',
-    placeholder: 'Comece a escrever o conteúdo aqui...'
-  });
-
-  // Quando o conteúdo do editor mudar, atualize o textarea oculto
-  // para que os dados sejam enviados com o formulário
-  quillEditor.on('text-change', function() {
-    const editorContent = document.getElementById(editorType === 'post' ? 'post-corpo' : 'curiosidade-texto');
-    if (editorContent) {
-      editorContent.value = quillEditor.root.innerHTML;
-    }
-  });
-
-  console.log('Editor Quill inicializado');
-};
-
-/**
- * Inicializa manipuladores de contagem de caracteres para campos com limite
- */
-const initCharCounters = () => {
-  const resumoTextarea = document.getElementById('post-resumo');
-  const resumoCounter = document.getElementById('resumo-counter');
-  
-  if (resumoTextarea && resumoCounter) {
-    resumoTextarea.addEventListener('input', () => {
-      const length = resumoTextarea.value.length;
-      resumoCounter.textContent = length;
-      
-      // Adiciona classe de aviso se estiver perto do limite
-      if (length > 180) {
-        resumoCounter.classList.add('char-limit-warning');
-      } else {
-        resumoCounter.classList.remove('char-limit-warning');
-      }
-    });
-  }
-};
-
-/**
- * Inicializa o manipulador para geração automática de slug
- */
-const initSlugGenerator = () => {
-  const btnGerarSlug = document.getElementById('gerar-slug');
-  const titleInput = document.getElementById('post-title');
-  const slugInput = document.getElementById('post-slug');
-  
-  if (btnGerarSlug && titleInput && slugInput) {
-    btnGerarSlug.addEventListener('click', () => {
-      const title = titleInput.value.trim();
-      if (!title) {
-        Toast.show('Digite um título para gerar o slug!', 'error');
-        return;
-      }
-      
-      // Gerar slug a partir do título
-      const slug = title
-        .toLowerCase()
-        .normalize('NFD') // Normaliza caracteres com acentos
-        .replace(/[\u0300-\u036f]/g, '') // Remove acentos
-        .replace(/[^\w\s-]/g, '') // Remove caracteres especiais
-        .replace(/\s+/g, '-') // Substitui espaços por hífens
-        .replace(/-+/g, '-') // Evita múltiplos hífens
-        .replace(/^-+|-+$/g, ''); // Remove hífens do início e fim
-      
-      slugInput.value = slug;
-      Toast.show('Slug gerado com sucesso!', 'success');
-    });
-    
-    // Adiciona a mesma funcionalidade ao perder o foco do título,
-    // mas apenas se o slug estiver vazio
-    titleInput.addEventListener('blur', () => {
-      if (slugInput.value.trim() === '' && titleInput.value.trim() !== '') {
-        btnGerarSlug.click();
-      }
-    });
-  }
-};
-
-/**
- * Inicializa o manipulador para upload e preview de imagens
- */
-const initImageUpload = () => {
-  const imageInput = document.getElementById('post-image');
-  const previewImg = document.getElementById('preview-img');
-  const removeImageBtn = document.getElementById('remove-image');
-  const imagePathInput = document.getElementById('image-path');
-  const progressBar = document.getElementById('progress-bar');
-  const uploadProgress = document.getElementById('upload-progress');
-  
-  if (imageInput && previewImg && removeImageBtn) {
-    // Tratamento do upload de arquivo
-    imageInput.addEventListener('change', async (e) => {
-      const file = e.target.files[0];
-      
-      if (!file) return;
-      
-      // Validar tipo de arquivo
-      if (!file.type.match('image.*')) {
-        Toast.show('Por favor, selecione uma imagem válida (JPG, PNG, WEBP).', 'error');
-        return;
-      }
-      
-      // Validar tamanho (2MB máximo)
-      if (file.size > 2 * 1024 * 1024) {
-        Toast.show('A imagem deve ter no máximo 2MB.', 'error');
-        return;
-      }
-      
-      // Exibir preview
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        previewImg.src = e.target.result;
-        previewImg.parentElement.classList.add('has-image');
-      };
-      reader.readAsDataURL(file);
-      
-      // Iniciar upload
-      try {
-        // Mostrar barra de progresso
-        if (progressBar && uploadProgress) {
-          progressBar.style.width = '0%';
-          uploadProgress.classList.add('visible');
-        }
-        
-        // Preparar nome do arquivo
-        const extension = file.name.split('.').pop();
-        const fileName = `${Date.now()}-${Math.random().toString(36).substring(2, 7)}.${extension}`;
-        const filePath = editorType === 'post' ? `noticias/${fileName}` : `curiosidades/${fileName}`;
-        
-        // Fazer upload
-        const updateProgress = (percent) => {
-          if (progressBar) {
-            progressBar.style.width = `${percent}%`;
-          }
-        };
-        
-        // Usar a função de upload com progresso
-        const result = await api.storage.uploadImage(file, editorType === 'post' ? 'noticias' : 'curiosidades', updateProgress);
-        
-        if (result.success) {
-          // Guardar o caminho da imagem
-          currentImagePath = result.path;
-          if (imagePathInput) {
-            imagePathInput.value = result.url;
-          }
-          Toast.show('Imagem enviada com sucesso!', 'success');
-        } else {
-          Toast.show(`Erro ao enviar imagem: ${result.error}`, 'error');
-        }
-      } catch (error) {
-        console.error('Erro no upload de imagem:', error);
-        Toast.show('Ocorreu um erro ao enviar a imagem. Tente novamente.', 'error');
-      } finally {
-        // Esconder barra de progresso
-        if (uploadProgress) {
-          setTimeout(() => {
-            uploadProgress.classList.remove('visible');
-          }, 1000);
-        }
-      }
-    });
-    
-    // Remover imagem
-    removeImageBtn.addEventListener('click', async () => {
-      // Se temos um caminho de imagem atual e estamos no modo edição,
-      // vamos remover a imagem do storage
-      if (currentImagePath && editorMode === 'edit') {
-        try {
-          await api.storage.deleteImage(currentImagePath);
-        } catch (error) {
-          console.error('Erro ao excluir imagem do storage:', error);
-        }
-      }
-      
-      // Resetar UI
-      previewImg.src = '../assets/img/placeholder-image.jpg';
-      previewImg.parentElement.classList.remove('has-image');
-      imageInput.value = '';
-      if (imagePathInput) {
-        imagePathInput.value = '';
-      }
-      currentImagePath = null;
-      
-      Toast.show('Imagem removida!', 'info');
-    });
-  }
-};
-
-/**
- * Obtém e processa os parâmetros da URL
- * @returns {Object} Objeto com os parâmetros mode, type e id
- */
-const getUrlParams = () => {
-  const urlParams = new URLSearchParams(window.location.search);
-  return {
-    mode: urlParams.get('mode') || 'create',
-    type: urlParams.get('type') || 'post',
-    id: urlParams.get('id')
-  };
-};
-
-/**
- * Inicializa a página do editor com base nos parâmetros da URL
- */
-const initEditorPage = async () => {
-  console.log('Inicializando página do editor');
-  
-  // Obter parâmetros da URL
-  const params = getUrlParams();
-  editorMode = params.mode;
-  editorType = params.type;
-  editorId = params.id;
-  
-  console.log('Parâmetros do editor:', params);
-  
-  // Atualizar elementos da UI
-  const editorTitle = document.getElementById('editor-title');
-  const breadcrumbType = document.getElementById('breadcrumb-type');
-  const breadcrumbAction = document.getElementById('breadcrumb-action');
-  
-  if (editorTitle) {
-    editorTitle.textContent = editorMode === 'create' 
-      ? (editorType === 'post' ? 'Nova Notícia' : 'Nova Curiosidade')
-      : (editorType === 'post' ? 'Editar Notícia' : 'Editar Curiosidade');
-  }
-  
-  if (breadcrumbType) {
-    breadcrumbType.textContent = editorType === 'post' ? 'Notícias' : 'Curiosidades';
-  }
-  
-  if (breadcrumbAction) {
-    breadcrumbAction.textContent = editorMode === 'create' ? 'Nova' : 'Editar';
-  }
-  
-  // Mostrar o formulário correto
-  const postForm = document.getElementById('post-form');
-  const curiosidadeForm = document.getElementById('curiosidade-form');
-  
-  if (postForm && curiosidadeForm) {
-    if (editorType === 'post') {
-      postForm.classList.remove('hidden');
-      curiosidadeForm.classList.add('hidden');
-    } else {
-      postForm.classList.add('hidden');
-      curiosidadeForm.classList.remove('hidden');
-    }
-  }
-  
-  // Atualizar campos hidden do formulário
-  const editorIdInput = document.getElementById('editor-id');
-  const editorTypeInput = document.getElementById('editor-type');
-  const editorModeInput = document.getElementById('editor-mode');
-  
-  if (editorIdInput) editorIdInput.value = editorId || '';
-  if (editorTypeInput) editorTypeInput.value = editorType;
-  if (editorModeInput) editorModeInput.value = editorMode;
-  
-  // Inicializar componentes do editor
-  initQuillEditor();
-  initCharCounters();
-  initSlugGenerator();
-  initImageUpload();
-  
-  // Se estamos no modo edição, carregar dados
-  if (editorMode === 'edit' && editorId) {
-    await loadContentForEditing();
-  } else {
-    // Preencher data atual para nova publicação
-    const dataInput = document.getElementById('post-data');
-    if (dataInput) {
-      const now = new Date();
-      const isoString = new Date(now.getTime() - now.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
-      dataInput.value = isoString;
-    }
-  }
-  
-  // Inicializar formulário
-  initEditorForm();
-};
-
-/**
- * Carrega os dados de um item existente para edição
- */
-const loadContentForEditing = async () => {
-  console.log(`Carregando ${editorType} com ID ${editorId} para edição`);
-  
-  // Mostrar loader
-  Loader.show('Carregando conteúdo...');
-  
-  try {
-    let result;
-    
-    // Buscar dados dependendo do tipo
-    if (editorType === 'post') {
-      result = await api.posts.getById(editorId);
-    } else {
-      result = await api.curiosidades.getById(editorId);
-    }
-    
-    if (!result.success || !result.data) {
-      throw new Error('Não foi possível carregar o conteúdo para edição.');
-    }
-    
-    const item = result.data;
-    
-    // Preencher os campos do formulário
-    if (editorType === 'post') {
-      // Campos específicos de post
-      document.getElementById('post-title').value = item.titulo || '';
-      document.getElementById('post-slug').value = item.slug || '';
-      document.getElementById('post-fonte').value = item.fonte || '';
-      document.getElementById('post-resumo').value = item.resumo || '';
-      
-      // Data de publicação
-      const dataInput = document.getElementById('post-data');
-      if (dataInput && item.data_publicacao) {
-        const date = new Date(item.data_publicacao);
-        const isoString = new Date(date.getTime() - date.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
-        dataInput.value = isoString;
-      }
-      
-      // Status
-      const statusSelect = document.getElementById('post-status');
-      if (statusSelect && item.status) {
-        statusSelect.value = item.status;
-      }
-      
-      // Imagem
-      if (item.image_path) {
-        const previewImg = document.getElementById('preview-img');
-        const imagePathInput = document.getElementById('image-path');
-        
-        if (previewImg) {
-          previewImg.src = item.image_path;
-          previewImg.parentElement.classList.add('has-image');
-        }
-        
-        if (imagePathInput) {
-          imagePathInput.value = item.image_path;
-        }
-        
-        // Armazenar o caminho para possível exclusão
-        currentImagePath = item.image_path;
-      }
-      
-      // Conteúdo no editor
-      if (quillEditor && item.corpo) {
-        quillEditor.root.innerHTML = item.corpo;
-        document.getElementById('post-corpo').value = item.corpo;
-      }
-    } else {
-      // Campos específicos de curiosidade
-      document.getElementById('curiosidade-texto').value = item.texto || '';
-      
-      // Data
-      const dataInput = document.getElementById('curiosidade-data');
-      if (dataInput && item.data) {
-        const date = new Date(item.data);
-        const isoString = new Date(date.getTime() - date.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
-        dataInput.value = isoString;
-      }
-      
-      // Status
-      const statusSelect = document.getElementById('curiosidade-status');
-      if (statusSelect && item.status) {
-        statusSelect.value = item.status;
-      }
-      
-      // Conteúdo no editor (se aplicável para curiosidades)
-      if (quillEditor && document.getElementById('curiosidade-texto')) {
-        quillEditor.root.innerHTML = item.texto || '';
-      }
-    }
-    
-    // Atualizar contadores de caracteres
-    const resumoTextarea = document.getElementById('post-resumo');
-    const resumoCounter = document.getElementById('resumo-counter');
-    
-    if (resumoTextarea && resumoCounter) {
-      resumoCounter.textContent = resumoTextarea.value.length;
-    }
-    
-    Toast.show('Conteúdo carregado com sucesso!', 'success');
-  } catch (error) {
-    console.error('Erro ao carregar conteúdo para edição:', error);
-    Toast.show(`Erro ao carregar conteúdo: ${error.message}`, 'error');
-  } finally {
-    Loader.hide();
-  }
+  handleConfigButton(); // Adicionado para o botão de configurações
+  handleTogglePassword(); // Para mostrar/ocultar senha nos formulários de login/reset
+  // Não chamar initQuillEditor, initCharCounters, etc. aqui, pois pertencem ao editor.js
+  console.log('Componentes de UI comuns do admin inicializados.');
 };
 
 /**
@@ -1097,71 +674,6 @@ const handleConfigButton = () => {
 };
 
 /**
- * Inicialização específica para páginas de administração.
- */
-const initAdminPage = async () => {
-  console.log('initAdminPage: Inicializando página de admin.');
-  const user = await checkAuthStatus(); // Verifica e redireciona se necessário
-
-  // Se checkAuthStatus redirecionou, user será null e não devemos prosseguir.
-  // Ou, se a página atual for a de login e o usuário já está logado, ele já foi redirecionado.
-  if (!user && window.location.pathname !== '/admin/login.html') {
-    console.log('initAdminPage: Usuário não autenticado após checkAuthStatus ou redirecionamento pendente. Saindo da inicialização.');
-    return;
-  }
-  
-  // Adiciona manipuladores de evento apenas se os elementos existirem na página atual
-  if (document.getElementById('login-form')) {
-    console.log('initAdminPage: Página de login detectada, configurando formulário de login.');
-    handleLoginForm();
-    handleForgotPassword();
-    handleTogglePassword();
-  }
-
-  if (document.body.classList.contains('admin-dashboard')) {
-    console.log('initAdminPage: Dashboard detectado.');
-    // Lógica específica do dashboard (carregar dados, etc.)
-    const adminNameEl = document.getElementById('admin-name');
-    if(adminNameEl && user && user.email) {
-        adminNameEl.textContent = user.user_metadata?.name || user.email;
-    }
-    // Inicializar UI componentes da dashboard
-    initAdminUIComponents();
-    
-    // Carregar dados iniciais da dashboard
-    loadDashboardData();
-  }
-  
-  if (document.body.classList.contains('admin-editor')) {
-    console.log('initAdminPage: Editor detectado.');
-    // Lógica específica do editor
-    initAdminUIComponents();
-    // Inicializar componentes do editor e carregar dados se necessário
-    initEditorPage();
-  }
-
-  const logoutBtn = document.getElementById('logout-btn');
-  if (logoutBtn) {
-    console.log('initAdminPage: Botão de logout encontrado.');
-    logoutBtn.addEventListener('click', async () => {
-      console.log('initAdminPage: Logout clicado.');
-      const { success, error } = await api.auth.logout();
-      if (success) {
-        Toast.show('Logout realizado com sucesso.', 'success');
-        window.location.href = '/admin/login.html';
-      } else {
-        Toast.show(error || 'Erro ao fazer logout.', 'error');
-      }
-    });
-  }
-  
-  // Configurar o botão e modal de configurações
-  handleConfigButton();
-  
-  console.log('initAdminPage: Inicialização da página de admin concluída.');
-};
-
-/**
  * Carrega dados para o dashboard
  */
 const loadDashboardData = async () => {
@@ -1396,11 +908,75 @@ const handleDeleteItem = async (e) => {
   }
 };
 
-// Inicializa quando o DOM estiver pronto
-document.addEventListener('DOMContentLoaded', () => {
-  console.log('DOMContentLoaded: Evento disparado.');
-  // Verifica se estamos em uma página de admin antes de rodar initAdminPage
-  if(window.location.pathname.startsWith('/admin/')) {
-    initAdminPage();
+/**
+ * Inicialização específica para páginas de administração.
+ */
+const initAdminPage = async () => {
+  console.log('initAdminPage: Inicializando página de admin.');
+  const user = await checkAuthStatus(); // Verifica e redireciona se necessário
+
+  // Se checkAuthStatus redirecionou, user será null e não devemos prosseguir.
+  // Ou, se a página atual for a de login e o usuário já está logado, ele já foi redirecionado.
+  if (!user && window.location.pathname !== '/admin/login.html') {
+    console.log('initAdminPage: Usuário não autenticado após checkAuthStatus ou redirecionamento pendente. Saindo da inicialização.');
+    return;
   }
-}); 
+  
+  // Adiciona manipuladores de evento apenas se os elementos existirem na página atual
+  if (document.getElementById('login-form')) {
+    console.log('initAdminPage: Página de login detectada, configurando formulário de login.');
+    handleLoginForm();
+    handleForgotPassword();
+    // handleTogglePassword(); // Chamado dentro de initAdminUIComponents ou globalmente se aplicável a todas as páginas admin
+  }
+
+  // Inicializa componentes de UI comuns em todas as páginas admin autenticadas
+  // Exceto na página de login, onde alguns desses componentes podem não existir ou ser inicializados de forma diferente.
+  if (window.location.pathname !== '/admin/login.html') {
+    initAdminUIComponents(); // Isso já chama handleTogglePassword, handleConfigButton etc.
+  } else {
+    // Para a página de login, apenas o toggle de senha é relevante dos UI comuns que não são parte do form
+    handleTogglePassword();
+  }
+  
+  // Lógica específica para páginas após UI comum ter sido inicializada
+  if (document.body.classList.contains('admin-dashboard')) {
+    console.log('initAdminPage: Dashboard detectado.');
+    const adminNameEl = document.getElementById('admin-name');
+    if(adminNameEl && user && user.user_metadata) { // Checa se user.user_metadata existe
+        adminNameEl.textContent = user.user_metadata.name || user.email;
+    } else if (adminNameEl && user && user.email) { // Fallback para email se nome não estiver em metadata
+        adminNameEl.textContent = user.email;
+    }
+    loadDashboardData();
+  }
+  
+  if (document.body.classList.contains('admin-editor')) {
+    console.log('initAdminPage: Editor detectado.');
+    // A inicialização do editor (initEditorPage) é feita exclusivamente por editor.js,
+    // que é carregado em admin/editor.html.
+    // initAdminUIComponents() já foi chamado acima se não for login.html.
+  }
+
+  const logoutBtn = document.getElementById('logout-btn');
+  if (logoutBtn) {
+    console.log('initAdminPage: Botão de logout encontrado.');
+    logoutBtn.addEventListener('click', async () => {
+      console.log('initAdminPage: Logout clicado.');
+      const { success, error } = await api.auth.logout();
+      if (success) {
+        Toast.show('Logout realizado com sucesso.', 'success');
+        window.location.href = '/admin/login.html';
+      } else {
+        Toast.show(error || 'Erro ao fazer logout.', 'error');
+      }
+    });
+  }
+  
+  // handleConfigButton(); // Já é chamado dentro de initAdminUIComponents
+  
+  console.log('initAdminPage: Inicialização da página de admin concluída.');
+};
+
+// Inicializar página de admin ao carregar
+window.addEventListener('DOMContentLoaded', initAdminPage);
