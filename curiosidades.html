@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Curumim News - Curiosidades e fatos interessantes para você">
+    <title>Curiosidades | Curumim News</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="icon" type="image/png" href="assets/img/favicon.png">
+    <!-- Font Awesome para ícones -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <header class="site-header">
+        <div class="container">
+            <div class="logo-container">
+                <a href="/" class="logo">
+                    <img src="assets/img/logo.png" alt="Curumim News Logo">
+                </a>
+                <button class="theme-toggle" aria-label="Alternar tema claro/escuro">
+                    <i class="fas fa-moon"></i>
+                </button>
+            </div>
+            
+            <nav class="main-nav">
+                <button class="menu-toggle" aria-label="Abrir menu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+                <ul class="nav-list">
+                    <li><a href="/">Home</a></li>
+                    <li><a href="/curiosidades.html" class="active">Curiosidades</a></li>
+                    <li><a href="/sobre.html">Sobre</a></li>
+                    <li><a href="/admin/login.html" class="nav-login"><i class="fas fa-user"></i> Entrar</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <!-- Banner da página -->
+        <section class="page-banner curiosidades-banner">
+            <div class="container">
+                <div class="banner-content">
+                    <h1><i class="fas fa-lightbulb"></i> Curiosidades</h1>
+                    <p>Fatos interessantes e informações surpreendentes do mundo todo</p>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Grade de curiosidades -->
+        <section class="curiosidades-section">
+            <div class="container">
+                <!-- Filtro e pesquisa -->
+                <div class="filter-container">
+                    <div class="search-box">
+                        <input type="text" id="search-curiosidades" placeholder="Pesquisar curiosidades...">
+                        <button id="search-btn" aria-label="Pesquisar">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                    
+                    <div class="filter-options">
+                        <select id="filter-date" class="filter-select" aria-label="Filtrar por data">
+                            <option value="newest">Mais recentes</option>
+                            <option value="oldest">Mais antigas</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <!-- Grade de cards -->
+                <div class="curiosidades-grid" id="curiosidades-grid">
+                    <!-- Os cards serão injetados via JavaScript -->
+                    <!-- Skeletons para carregamento -->
+                    <div class="skeleton-loader curiosidade-loader"></div>
+                    <div class="skeleton-loader curiosidade-loader"></div>
+                    <div class="skeleton-loader curiosidade-loader"></div>
+                    <div class="skeleton-loader curiosidade-loader"></div>
+                    <div class="skeleton-loader curiosidade-loader"></div>
+                    <div class="skeleton-loader curiosidade-loader"></div>
+                    <div class="skeleton-loader curiosidade-loader"></div>
+                    <div class="skeleton-loader curiosidade-loader"></div>
+                    <div class="skeleton-loader curiosidade-loader"></div>
+                </div>
+                
+                <!-- Paginação -->
+                <div class="pagination-container">
+                    <button id="load-more-curiosidades" class="btn-load-more">
+                        <span>Carregar mais</span>
+                        <i class="fas fa-spinner fa-spin hidden"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Call to action para enviar curiosidades -->
+        <section class="cta-section">
+            <div class="container">
+                <div class="cta-card">
+                    <div class="cta-content">
+                        <h2><i class="fas fa-share-alt"></i> Compartilhe seu conhecimento</h2>
+                        <p>Você conhece algum fato interessante ou curioso? Compartilhe conosco e poderemos publicá-lo!</p>
+                        <button class="btn-primary" id="share-curiosidade-btn">Enviar curiosidade</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Modal para envio de curiosidade -->
+        <div id="curiosidade-modal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>Compartilhar Curiosidade</h2>
+                    <button class="close-modal" aria-label="Fechar">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <form id="curiosidade-form">
+                        <div class="form-group">
+                            <label for="curiosidade-nome">Seu nome</label>
+                            <input type="text" id="curiosidade-nome" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="curiosidade-email">Seu e-mail</label>
+                            <input type="email" id="curiosidade-email" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="curiosidade-texto">Curiosidade</label>
+                            <textarea id="curiosidade-texto" rows="5" required></textarea>
+                            <small>Máximo de 300 caracteres</small>
+                        </div>
+                        <div class="form-actions">
+                            <button type="submit" class="btn-submit">Enviar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-about">
+                    <img src="assets/img/logo-white.png" alt="Curumim News" class="footer-logo">
+                    <p>O Curumim News é um portal de notícias independente comprometido com a verdade e a qualidade da informação.</p>
+                </div>
+                
+                <div class="footer-links">
+                    <h3>Links Rápidos</h3>
+                    <ul>
+                        <li><a href="/">Home</a></li>
+                        <li><a href="/curiosidades.html">Curiosidades</a></li>
+                        <li><a href="/sobre.html">Sobre</a></li>
+                        <li><a href="/admin/login.html">Área Administrativa</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-social">
+                    <h3>Redes Sociais</h3>
+                    <div class="social-icons">
+                        <a href="#" aria-label="Facebook"><i class="fab fa-facebook"></i></a>
+                        <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                        <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                        <a href="#" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="copyright">
+                <p>&copy; 2023 Curumim News. Todos os direitos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Componente Toast para notificações -->
+    <div id="toast-container" class="toast-container"></div>
+
+    <!-- Scripts -->
+    <script type="module" src="assets/js/main.js"></script>
+    <script type="module" src="assets/js/curiosidades.js"></script>
+</body>
+</html> 

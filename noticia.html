@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Curumim News - Leia notícias completas e atualizadas">
+    <title>Notícia | Curumim News</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="icon" type="image/png" href="assets/img/favicon.png">
+    <!-- Font Awesome para ícones -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <header class="site-header">
+        <div class="container">
+            <div class="logo-container">
+                <a href="/" class="logo">
+                    <img src="assets/img/logo.png" alt="Curumim News Logo">
+                </a>
+                <button class="theme-toggle" aria-label="Alternar tema claro/escuro">
+                    <i class="fas fa-moon"></i>
+                </button>
+            </div>
+            
+            <nav class="main-nav">
+                <button class="menu-toggle" aria-label="Abrir menu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+                <ul class="nav-list">
+                    <li><a href="/">Home</a></li>
+                    <li><a href="/curiosidades.html">Curiosidades</a></li>
+                    <li><a href="/sobre.html">Sobre</a></li>
+                    <li><a href="/admin/login.html" class="nav-login"><i class="fas fa-user"></i> Entrar</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <article class="news-article">
+            <div class="container">
+                <!-- Breadcrumb -->
+                <div class="breadcrumb">
+                    <a href="/"><i class="fas fa-home"></i> Home</a>
+                    <span class="separator"><i class="fas fa-chevron-right"></i></span>
+                    <span id="article-category">Categoria</span>
+                    <span class="separator"><i class="fas fa-chevron-right"></i></span>
+                    <span id="article-title-breadcrumb">Carregando...</span>
+                </div>
+
+                <!-- Skeleton loader para o conteúdo principal -->
+                <div id="article-loader" class="article-skeleton">
+                    <div class="skeleton-loader title-loader"></div>
+                    <div class="skeleton-loader meta-loader"></div>
+                    <div class="skeleton-loader image-loader"></div>
+                    <div class="skeleton-loader text-loader"></div>
+                    <div class="skeleton-loader text-loader"></div>
+                    <div class="skeleton-loader text-loader"></div>
+                </div>
+                
+                <!-- Conteúdo do artigo (inicialmente oculto) -->
+                <div id="article-content" class="article-content hidden">
+                    <!-- Cabeçalho do artigo -->
+                    <header class="article-header">
+                        <h1 id="article-title" class="article-title"></h1>
+                        
+                        <div class="article-meta">
+                            <div class="meta-item">
+                                <i class="fas fa-user"></i>
+                                <span id="article-author">Carregando...</span>
+                            </div>
+                            <div class="meta-item">
+                                <i class="fas fa-calendar"></i>
+                                <time id="article-date">00/00/0000</time>
+                            </div>
+                            <div class="meta-item">
+                                <i class="fas fa-link"></i>
+                                <span id="article-source">Fonte</span>
+                            </div>
+                            <div class="meta-item">
+                                <i class="fas fa-clock"></i>
+                                <span id="reading-time">5 min de leitura</span>
+                            </div>
+                        </div>
+                    </header>
+                    
+                    <!-- Imagem principal -->
+                    <figure class="article-featured-image">
+                        <img id="article-image" src="" alt="">
+                        <figcaption id="article-image-caption"></figcaption>
+                    </figure>
+                    
+                    <!-- Corpo do artigo -->
+                    <div id="article-body" class="article-body">
+                        <!-- Conteúdo dinâmico será injetado via JavaScript -->
+                    </div>
+                </div>
+
+                <!-- Compartilhamento -->
+                <div class="article-share">
+                    <h3><i class="fas fa-share-alt"></i> Compartilhe</h3>
+                    <div class="share-buttons">
+                        <button class="share-btn facebook" aria-label="Compartilhar no Facebook">
+                            <i class="fab fa-facebook-f"></i>
+                        </button>
+                        <button class="share-btn twitter" aria-label="Compartilhar no Twitter">
+                            <i class="fab fa-twitter"></i>
+                        </button>
+                        <button class="share-btn whatsapp" aria-label="Compartilhar no WhatsApp">
+                            <i class="fab fa-whatsapp"></i>
+                        </button>
+                        <button class="share-btn linkedin" aria-label="Compartilhar no LinkedIn">
+                            <i class="fab fa-linkedin-in"></i>
+                        </button>
+                        <button class="share-btn copy-link" aria-label="Copiar link">
+                            <i class="fas fa-link"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Notícias relacionadas -->
+                <section class="related-news">
+                    <h2 class="section-title"><i class="fas fa-newspaper"></i> Notícias Relacionadas</h2>
+                    <div class="related-grid" id="related-news-grid">
+                        <!-- Cards relacionados serão injetados via JavaScript -->
+                        <div class="skeleton-loader card-loader"></div>
+                        <div class="skeleton-loader card-loader"></div>
+                        <div class="skeleton-loader card-loader"></div>
+                    </div>
+                </section>
+            </div>
+        </article>
+    </main>
+
+    <footer class="site-footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-about">
+                    <img src="assets/img/logo-white.png" alt="Curumim News" class="footer-logo">
+                    <p>O Curumim News é um portal de notícias independente comprometido com a verdade e a qualidade da informação.</p>
+                </div>
+                
+                <div class="footer-links">
+                    <h3>Links Rápidos</h3>
+                    <ul>
+                        <li><a href="/">Home</a></li>
+                        <li><a href="/curiosidades.html">Curiosidades</a></li>
+                        <li><a href="/sobre.html">Sobre</a></li>
+                        <li><a href="/admin/login.html">Área Administrativa</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-social">
+                    <h3>Redes Sociais</h3>
+                    <div class="social-icons">
+                        <a href="#" aria-label="Facebook"><i class="fab fa-facebook"></i></a>
+                        <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                        <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                        <a href="#" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="copyright">
+                <p>&copy; 2023 Curumim News. Todos os direitos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Componente Toast para notificações -->
+    <div id="toast-container" class="toast-container"></div>
+
+    <!-- Scripts -->
+    <script type="module" src="assets/js/main.js"></script>
+    <script type="module" src="assets/js/noticia.js"></script>
+</body>
+</html> 
