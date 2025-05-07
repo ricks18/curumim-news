@@ -204,24 +204,22 @@
                                 </div>
                             </div>
                             
-                            <div class="data-table-container">
-                                <table class="data-table" id="noticias-table">
+                            <div class="data-table-container table-responsive">
+                                <table class="data-table dashboard-table" id="noticias-table">
                                     <thead>
                                         <tr>
-                                            <th>ID</th>
+                                            <th width="80">Imagem</th>
                                             <th>Título</th>
                                             <th>Autor</th>
-                                            <th>Fonte</th>
-                                            <th>Data Publicação</th>
+                                            <th>Data</th>
                                             <th>Status</th>
-                                            <th>Ações</th>
+                                            <th width="120">Ações</th>
                                         </tr>
                                     </thead>
-                                    <tbody id="noticias-tbody">
-                                        <!-- Dados serão injetados via JavaScript -->
-                                        <tr class="table-loader">
-                                            <td colspan="7">
-                                                <div class="skeleton-loader"></div>
+                                    <tbody>
+                                        <tr>
+                                            <td colspan="6" class="loading-row">
+                                                <div class="loader"></div>
                                             </td>
                                         </tr>
                                     </tbody>
@@ -251,23 +249,21 @@
                                 </div>
                             </div>
                             
-                            <div class="data-table-container">
-                                <table class="data-table" id="curiosidades-table">
+                            <div class="data-table-container table-responsive">
+                                <table class="data-table dashboard-table" id="curiosidades-table">
                                     <thead>
                                         <tr>
-                                            <th>ID</th>
                                             <th>Texto</th>
                                             <th>Autor</th>
                                             <th>Data</th>
                                             <th>Status</th>
-                                            <th>Ações</th>
+                                            <th width="120">Ações</th>
                                         </tr>
                                     </thead>
-                                    <tbody id="curiosidades-tbody">
-                                        <!-- Dados serão injetados via JavaScript -->
-                                        <tr class="table-loader">
-                                            <td colspan="6">
-                                                <div class="skeleton-loader"></div>
+                                    <tbody>
+                                        <tr>
+                                            <td colspan="5" class="loading-row">
+                                                <div class="loader"></div>
                                             </td>
                                         </tr>
                                     </tbody>

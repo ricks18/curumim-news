@@ -18,23 +18,25 @@ import api from './api.js';
 export const Utils = {
   /**
    * Formata uma data para exibição
-   * @param {string} dateString - String ISO de data 
-   * @param {boolean} showTime - Se deve incluir a hora
+   * @param {string|Date} date - Data a ser formatada
+   * @param {boolean} includeTime - Se deve incluir a hora
    * @returns {string} Data formatada
    */
-  formatDate: (dateString, showTime = false) => {
-    if (!dateString) return '';
+  formatDate: (date, includeTime = false) => {
+    if (!date) return '';
     
-    const date = new Date(dateString);
-    const options = { 
-      day: '2-digit', 
-      month: '2-digit', 
-      year: 'numeric',
-      hour: showTime ? '2-digit' : undefined,
-      minute: showTime ? '2-digit' : undefined
+    const options = {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric'
     };
     
-    return date.toLocaleDateString('pt-BR', options);
+    if (includeTime) {
+      options.hour = '2-digit';
+      options.minute = '2-digit';
+    }
+    
+    return new Date(date).toLocaleDateString('pt-BR', options);
   },
   
   /**
@@ -54,21 +56,63 @@ export const Utils = {
   },
   
   /**
-   * Trunca um texto para um número máximo de palavras
-   * @param {string} text - Texto original
-   * @param {number} wordLimit - Limite de palavras
+   * Trunca um texto para o tamanho especificado
+   * @param {string} text - Texto a ser truncado
+   * @param {number} length - Tamanho máximo
    * @returns {string} Texto truncado
    */
-  truncateText: (text, wordLimit) => {
-    if (!text) return '';
+  truncateText: (text, length = 100) => {
+    if (!text || text.length <= length) return text;
+    return text.substring(0, length).trim() + '...';
+  },
+  
+  /**
+   * Converte slug para título
+   * @param {string} slug - Slug a ser convertido
+   * @returns {string} Título
+   */
+  slugToTitle: (slug) => {
+    if (!slug) return '';
+    return slug
+      .split('-')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ');
+  },
+  
+  /**
+   * Debounce para evitar múltiplas chamadas de função
+   * @param {Function} func - Função a ser executada
+   * @param {number} wait - Tempo de espera em ms
+   * @returns {Function} Função com debounce
+   */
+  debounce: (func, wait = 300) => {
+    let timeout;
+    return function(...args) {
+      clearTimeout(timeout);
+      timeout = setTimeout(() => func.apply(this, args), wait);
+    };
+  },
+  
+  /**
+   * Gera ID único
+   * @returns {string} ID aleatório
+   */
+  generateId: () => {
+    return Date.now().toString(36) + Math.random().toString(36).substr(2, 5);
+  },
+
+  /**
+   * Converte bytes para uma string legível
+   * @param {number} bytes - Número de bytes
+   * @returns {string} Tamanho formatado
+   */
+  formatFileSize: (bytes) => {
+    if (bytes === 0) return '0 Bytes';
     
-    const words = text.trim().split(/\s+/);
+    const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(1024));
     
-    if (words.length <= wordLimit) {
-      return text;
-    }
-    
-    return words.slice(0, wordLimit).join(' ') + '...';
+    return parseFloat((bytes / Math.pow(1024, i)).toFixed(2)) + ' ' + sizes[i];
   },
   
   /**
@@ -244,92 +288,81 @@ export const ThemeManager = {
  * Gerenciador de notificações Toast
  */
 export const Toast = {
-  container: null,
-  timeouts: {},
-  
   /**
-   * Inicializa o componente Toast
-   */
-  init() {
-    this.container = document.getElementById('toast-container');
-    if (!this.container) {
-      console.error('Elemento toast-container não encontrado');
-    }
-  },
-  
-  /**
-   * Exibe uma notificação Toast
+   * Mostra uma mensagem toast
    * @param {string} message - Mensagem a ser exibida
-   * @param {string} type - Tipo de toast ('success', 'error', 'info')
-   * @param {number} duration - Duração em milissegundos
+   * @param {string} type - Tipo de mensagem (success, error, warning, info)
+   * @param {number} duration - Duração em ms
    */
-  show(message, type = 'info', duration = 3000) {
-    if (!this.container) {
-      this.init();
+  show: (message, type = 'info', duration = 3000) => {
+    // Verifica se já existe um toast container
+    let toastContainer = document.querySelector('.toast-container');
+    
+    // Se não existir, cria um novo
+    if (!toastContainer) {
+      toastContainer = document.createElement('div');
+      toastContainer.className = 'toast-container';
+      document.body.appendChild(toastContainer);
     }
     
-    // Criar elemento toast
+    // Cria o toast
     const toast = document.createElement('div');
-    toast.className = `toast ${type}`;
-    const id = `toast-${Date.now()}`;
-    toast.id = id;
+    toast.className = `toast toast-${type}`;
+    toast.setAttribute('role', 'alert');
     
-    // Definir ícone baseado no tipo
-    let icon = 'info-circle';
-    if (type === 'success') icon = 'check-circle';
-    if (type === 'error') icon = 'exclamation-circle';
+    // Adiciona ícone com base no tipo
+    let icon;
+    switch (type) {
+      case 'success':
+        icon = 'fa-check-circle';
+        break;
+      case 'error':
+        icon = 'fa-times-circle';
+        break;
+      case 'warning':
+        icon = 'fa-exclamation-triangle';
+        break;
+      default:
+        icon = 'fa-info-circle';
+    }
     
-    // Estrutura do toast
+    // Define o conteúdo do toast
     toast.innerHTML = `
       <div class="toast-icon">
-        <i class="fas fa-${icon}"></i>
+        <i class="fas ${icon}"></i>
       </div>
       <div class="toast-content">
         <p>${message}</p>
       </div>
-      <div class="toast-close">
+      <button class="toast-close" aria-label="Fechar">
         <i class="fas fa-times"></i>
-      </div>
+      </button>
     `;
     
-    // Adicionar ao container
-    this.container.appendChild(toast);
+    // Adiciona o toast ao container
+    toastContainer.appendChild(toast);
     
-    // Configurar botão de fechar
-    const closeBtn = toast.querySelector('.toast-close');
-    closeBtn.addEventListener('click', () => {
-      this.hide(id);
+    // Adiciona evento para fechar manualmente
+    const closeButton = toast.querySelector('.toast-close');
+    closeButton.addEventListener('click', () => {
+      toast.classList.add('toast-hiding');
+      setTimeout(() => {
+        toast.remove();
+      }, 300);
     });
     
-    // Auto-remover após duração
-    this.timeouts[id] = setTimeout(() => {
-      this.hide(id);
-    }, duration);
-  },
-  
-  /**
-   * Esconde uma notificação Toast
-   * @param {string} id - ID do toast a esconder
-   */
-  hide(id) {
-    const toast = document.getElementById(id);
-    if (toast) {
-      toast.style.opacity = '0';
-      toast.style.transform = 'translateX(100%)';
-      
-      // Limpar o timeout
-      if (this.timeouts[id]) {
-        clearTimeout(this.timeouts[id]);
-        delete this.timeouts[id];
-      }
-      
-      // Remover do DOM após animação
+    // Adiciona classe para animar a entrada
+    setTimeout(() => {
+      toast.classList.add('toast-visible');
+    }, 10);
+    
+    // Remove o toast após o tempo determinado
+    setTimeout(() => {
+      toast.classList.add('toast-hiding');
       setTimeout(() => {
-        if (toast.parentNode) {
-          toast.parentNode.removeChild(toast);
-        }
+        toast.remove();
       }, 300);
-    }
+    }, duration);
   }
 };
 
@@ -383,56 +416,59 @@ export const MobileNav = {
  */
 export const Loader = {
   /**
-   * Mostra um skeleton loader e esconde o conteúdo
-   * @param {string} loaderId - ID do elemento loader
-   * @param {string} contentId - ID do elemento de conteúdo
+   * Mostra o loader
+   * @param {string} message - Mensagem opcional
    */
-  showSkeleton(loaderId, contentId) {
-    const loader = document.getElementById(loaderId);
-    const content = document.getElementById(contentId);
+  show: (message = 'Carregando...') => {
+    // Verifica se já existe um loader
+    if (document.querySelector('.loader-overlay')) {
+      return;
+    }
     
-    if (loader) loader.classList.remove('hidden');
-    if (content) content.classList.add('hidden');
+    // Cria a estrutura do loader
+    const loaderOverlay = document.createElement('div');
+    loaderOverlay.className = 'loader-overlay';
+    
+    loaderOverlay.innerHTML = `
+      <div class="loader-wrapper">
+        <div class="loader-spinner"></div>
+        <p class="loader-message">${message}</p>
+      </div>
+    `;
+    
+    // Adiciona o loader ao DOM
+    document.body.appendChild(loaderOverlay);
+    
+    // Adiciona classe para animar a entrada
+    setTimeout(() => {
+      loaderOverlay.classList.add('loader-visible');
+    }, 10);
   },
   
   /**
-   * Esconde um skeleton loader e mostra o conteúdo
-   * @param {string} loaderId - ID do elemento loader
-   * @param {string} contentId - ID do elemento de conteúdo
+   * Esconde o loader
    */
-  hideSkeleton(loaderId, contentId) {
-    const loader = document.getElementById(loaderId);
-    const content = document.getElementById(contentId);
+  hide: () => {
+    const loaderOverlay = document.querySelector('.loader-overlay');
     
-    if (loader) loader.classList.add('hidden');
-    if (content) content.classList.remove('hidden');
+    if (loaderOverlay) {
+      loaderOverlay.classList.remove('loader-visible');
+      setTimeout(() => {
+        loaderOverlay.remove();
+      }, 300);
+    }
   },
   
   /**
-   * Mostra um indicador de spinner em um botão
-   * @param {string} buttonId - ID do botão
-   * @param {string} spinnerId - ID do spinner
-   * @param {boolean} disable - Se deve desabilitar o botão
+   * Atualiza a mensagem do loader
+   * @param {string} message - Nova mensagem
    */
-  showButtonSpinner(buttonId, spinnerId, disable = true) {
-    const button = document.getElementById(buttonId);
-    const spinner = document.getElementById(spinnerId);
+  updateMessage: (message) => {
+    const loaderMessage = document.querySelector('.loader-message');
     
-    if (spinner) spinner.classList.remove('hidden');
-    if (button && disable) button.disabled = true;
-  },
-  
-  /**
-   * Esconde um indicador de spinner em um botão
-   * @param {string} buttonId - ID do botão
-   * @param {string} spinnerId - ID do spinner
-   */
-  hideButtonSpinner(buttonId, spinnerId) {
-    const button = document.getElementById(buttonId);
-    const spinner = document.getElementById(spinnerId);
-    
-    if (spinner) spinner.classList.add('hidden');
-    if (button) button.disabled = false;
+    if (loaderMessage) {
+      loaderMessage.textContent = message;
+    }
   }
 };
 
@@ -445,18 +481,18 @@ export const Loader = {
  */
 export const Modal = {
   /**
-   * Inicializa os modais na página
+   * Inicializa o Modal
    */
   init() {
-    // Configurar botões de abrir modal
+    // Adiciona event listeners para todos os botões que abrem modais
     document.querySelectorAll('[data-modal]').forEach(button => {
-      const modalId = button.getAttribute('data-modal');
       button.addEventListener('click', () => {
+        const modalId = button.dataset.modal;
         this.open(modalId);
       });
     });
     
-    // Configurar botões de fechar modal
+    // Adiciona event listeners para botões de fechar modais
     document.querySelectorAll('.close-modal').forEach(button => {
       const modal = button.closest('.modal');
       button.addEventListener('click', () => {
@@ -466,7 +502,7 @@ export const Modal = {
       });
     });
     
-    // Fechar modal ao clicar fora
+    // Adiciona event listeners para fechar modais clicando no overlay
     document.querySelectorAll('.modal').forEach(modal => {
       modal.addEventListener('click', (e) => {
         if (e.target === modal) {
@@ -474,40 +510,193 @@ export const Modal = {
         }
       });
     });
-    
-    // Tecla ESC para fechar modal
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') {
-        const openModal = document.querySelector('.modal.active');
-        if (openModal) {
-          this.close(openModal.id);
-        }
-      }
-    });
   },
   
   /**
-   * Abre um modal específico
-   * @param {string} modalId - ID do modal
+   * Abre um modal existente no DOM pelo ID
+   * @param {string} modalId - ID do elemento modal
    */
   open(modalId) {
     const modal = document.getElementById(modalId);
     if (modal) {
       modal.classList.add('active');
-      document.body.style.overflow = 'hidden'; // Prevenir scroll de fundo
+      document.body.style.overflow = 'hidden';
     }
   },
   
   /**
-   * Fecha um modal específico
-   * @param {string} modalId - ID do modal
+   * Fecha um modal existente no DOM pelo ID
+   * @param {string} modalId - ID do elemento modal
    */
   close(modalId) {
     const modal = document.getElementById(modalId);
     if (modal) {
       modal.classList.remove('active');
-      document.body.style.overflow = ''; // Restaurar scroll
+      document.body.style.overflow = '';
     }
+  },
+
+  /**
+   * Mostra um modal
+   * @param {Object} options - Opções do modal
+   * @param {string} options.title - Título do modal
+   * @param {string} options.content - Conteúdo HTML do modal
+   * @param {Array} options.buttons - Botões do modal [{label, class, action}]
+   * @param {boolean} options.closeOnOverlay - Se o modal deve fechar ao clicar no overlay
+   * @param {string} options.size - Tamanho do modal (small, medium, large)
+   * @returns {Object} Objeto do modal com método close
+   */
+  show: (options) => {
+    const defaults = {
+      title: 'Aviso',
+      content: '',
+      buttons: [
+        {
+          label: 'OK',
+          class: 'btn-primary',
+          action: () => modal.close()
+        }
+      ],
+      closeOnOverlay: true,
+      size: 'medium'
+    };
+    
+    const settings = { ...defaults, ...options };
+    
+    // Cria a estrutura do modal
+    const modalOverlay = document.createElement('div');
+    modalOverlay.className = 'modal-overlay';
+    
+    const modalWrapper = document.createElement('div');
+    modalWrapper.className = `modal-wrapper modal-${settings.size}`;
+    modalWrapper.setAttribute('role', 'dialog');
+    modalWrapper.setAttribute('aria-modal', 'true');
+    
+    // Adiciona o conteúdo do modal
+    modalWrapper.innerHTML = `
+      <div class="modal-header">
+        <h3 class="modal-title">${settings.title}</h3>
+        <button class="modal-close" aria-label="Fechar">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="modal-content">
+        ${settings.content}
+      </div>
+      <div class="modal-footer"></div>
+    `;
+    
+    // Adiciona os botões
+    const modalFooter = modalWrapper.querySelector('.modal-footer');
+    settings.buttons.forEach(button => {
+      const btn = document.createElement('button');
+      btn.className = button.class || 'btn-secondary';
+      btn.textContent = button.label;
+      btn.addEventListener('click', button.action);
+      modalFooter.appendChild(btn);
+    });
+    
+    // Adiciona o modal ao DOM
+    modalOverlay.appendChild(modalWrapper);
+    document.body.appendChild(modalOverlay);
+    
+    // Impede o scroll do body
+    document.body.style.overflow = 'hidden';
+    
+    // Adiciona eventos
+    const closeBtn = modalWrapper.querySelector('.modal-close');
+    closeBtn.addEventListener('click', () => modal.close());
+    
+    if (settings.closeOnOverlay) {
+      modalOverlay.addEventListener('click', (e) => {
+        if (e.target === modalOverlay) {
+          modal.close();
+        }
+      });
+    }
+    
+    // Adiciona classe para animar a entrada
+    setTimeout(() => {
+      modalOverlay.classList.add('modal-visible');
+    }, 10);
+    
+    // Objeto do modal
+    const modal = {
+      /**
+       * Fecha o modal
+       */
+      close: () => {
+        modalOverlay.classList.remove('modal-visible');
+        setTimeout(() => {
+          modalOverlay.remove();
+          document.body.style.overflow = '';
+        }, 300);
+      },
+      
+      /**
+       * Atualiza o conteúdo do modal
+       * @param {string} content - Novo conteúdo HTML
+       */
+      updateContent: (content) => {
+        const contentDiv = modalWrapper.querySelector('.modal-content');
+        contentDiv.innerHTML = content;
+      }
+    };
+    
+    return modal;
+  },
+  
+  /**
+   * Mostra uma caixa de confirmação
+   * @param {string} message - Mensagem de confirmação
+   * @param {Function} onConfirm - Função a ser executada quando confirmar
+   * @param {Function} onCancel - Função a ser executada quando cancelar
+   * @param {string} title - Título do modal
+   * @returns {Object} Objeto do modal
+   */
+  confirm: (message, onConfirm, onCancel = () => {}, title = 'Confirmação') => {
+    return Modal.show({
+      title,
+      content: `<p>${message}</p>`,
+      buttons: [
+        {
+          label: 'Cancelar',
+          class: 'btn-secondary',
+          action: () => {
+            modal.close();
+            onCancel();
+          }
+        },
+        {
+          label: 'Confirmar',
+          class: 'btn-primary',
+          action: () => {
+            modal.close();
+            onConfirm();
+          }
+        }
+      ]
+    });
+  },
+  
+  /**
+   * Mostra uma caixa de alerta
+   * @param {string} message - Mensagem de alerta
+   * @param {string} title - Título do modal
+   * @returns {Object} Objeto do modal
+   */
+  alert: (message, title = 'Aviso') => {
+    return Modal.show({
+      title,
+      content: `<p>${message}</p>`,
+      buttons: [
+        {
+          label: 'OK',
+          class: 'btn-primary',
+          action: () => modal.close()
+        }
+      ]
+    });
   }
 };
 
