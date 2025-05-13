@@ -359,10 +359,9 @@ export const ThemeManager = {
     
     if (savedTheme) {
       this.setTheme(savedTheme);
-    } else if (Utils.prefersDarkMode()) {
-      this.setTheme('dark');
     } else {
-      this.setTheme('light');
+      // Define 'light' como padrão se nada estiver salvo e removemos a detecção automática
+      this.setTheme('light'); 
     }
   },
   
@@ -376,13 +375,6 @@ export const ThemeManager = {
       button.addEventListener('click', () => {
         this.toggleTheme();
       });
-    });
-    
-    // Detectar mudanças na preferência do sistema
-    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
-      if (!localStorage.getItem(this.STORAGE_KEY)) {
-        this.setTheme(e.matches ? 'dark' : 'light');
-      }
     });
   },
   

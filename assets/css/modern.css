@@ -345,6 +345,7 @@ button {
 /* Latest News Section */
 .latest-news {
   padding: var(--spacing-xl) 0;
+  background-color: var(--cor-fundo);
 }
 
 .section-heading {
