@@ -15,9 +15,12 @@ let currentImagePath; // Caminho da imagem atual no storage (se aplicável)
 
 /**
  * Inicializa o Editor Quill para WYSIWYG
+ * @param {string} containerSelector - Seletor do DIV container do editor
+ * @param {string} textareaSelector - Seletor do textarea oculto para sincronização
+ * @param {string} placeholderText - Texto de placeholder para o editor
  */
-const initQuillEditor = () => {
-  if (!document.getElementById('editor-container')) return;
+const initQuillEditor = (containerSelector, textareaSelector, placeholderText) => {
+  if (!document.querySelector(containerSelector)) return;
   
   // Definir as opções e ferramentas do editor
   const toolbarOptions = [
@@ -38,30 +41,32 @@ const initQuillEditor = () => {
   ];
 
   // Inicializar o editor Quill
-  quillEditor = new Quill('#editor-container', {
+  quillEditor = new Quill(containerSelector, {
     modules: {
       toolbar: toolbarOptions
     },
     theme: 'snow',
-    placeholder: 'Comece a escrever o conteúdo aqui...'
+    placeholder: placeholderText || 'Comece a escrever o conteúdo aqui...'
   });
 
   // Quando o conteúdo do editor mudar, atualize o textarea oculto
   // para que os dados sejam enviados com o formulário
   quillEditor.on('text-change', function() {
-    const editorContent = document.getElementById('post-corpo');
-    if (editorContent) {
-      editorContent.value = quillEditor.root.innerHTML;
+    const targetTextarea = document.querySelector(textareaSelector);
+    if (targetTextarea) {
+      targetTextarea.value = quillEditor.root.innerHTML;
     }
   });
 
   // Personalizar handler de imagem para usar nosso uploader
+  // Nota: O handler de imagem será compartilhado. Se precisar de comportamento diferente por tipo,
+  // isso precisaria de mais lógica aqui ou um handler separado.
   const toolbar = quillEditor.getModule('toolbar');
   toolbar.addHandler('image', function() {
-    selectLocalImage();
+    selectLocalImage(); // selectLocalImage pode precisar de contexto se o upload for para pastas diferentes
   });
 
-  console.log('Editor Quill inicializado');
+  console.log(`Editor Quill inicializado para ${containerSelector}`);
 };
 
 /**
@@ -135,23 +140,6 @@ const initCharCounters = () => {
         resumoCounter.classList.add('char-limit-warning');
       } else {
         resumoCounter.classList.remove('char-limit-warning');
-      }
-    });
-  }
-  
-  const curiosidadeTextarea = document.getElementById('curiosidade-texto');
-  const curiosidadeCounter = document.getElementById('curiosidade-counter');
-  
-  if (curiosidadeTextarea && curiosidadeCounter) {
-    curiosidadeTextarea.addEventListener('input', () => {
-      const length = curiosidadeTextarea.value.length;
-      curiosidadeCounter.textContent = length;
-      
-      // Adiciona classe de aviso se estiver perto do limite
-      if (length > 450) {
-        curiosidadeCounter.classList.add('char-limit-warning');
-      } else {
-        curiosidadeCounter.classList.remove('char-limit-warning');
       }
     });
   }
@@ -392,7 +380,12 @@ const loadContentForEditing = async () => {
       }
     } else {
       // Campos específicos de curiosidade
-      document.getElementById('curiosidade-texto').value = item.texto || '';
+      const curiosidadeTextoValor = item.texto || '';
+      document.getElementById('curiosidade-texto').value = curiosidadeTextoValor;
+      // Popular o editor Quill para curiosidades se ele estiver ativo
+      if (quillEditor && editorType === 'curiosidade') {
+        quillEditor.root.innerHTML = curiosidadeTextoValor;
+      }
       
       // Data
       const dataInput = document.getElementById('curiosidade-data');
@@ -575,16 +568,23 @@ const validateEditorForm = () => {
     }
   } else {
     // Validar campos de curiosidade
-    const texto = document.getElementById('curiosidade-texto').value.trim();
+    const textoHtml = document.getElementById('curiosidade-texto').value.trim(); // Conteúdo HTML do Quill
     const data = document.getElementById('curiosidade-data').value;
     
-    if (!texto) {
+    if (!textoHtml || textoHtml === '<p><br></p>') {
       Toast.show('O texto da curiosidade é obrigatório.', 'error');
       isValid = false;
-    } else if (texto.length > 500) {
-      Toast.show('O texto da curiosidade deve ter no máximo 500 caracteres.', 'error');
-      isValid = false;
-    }
+    } 
+    // A validação de limite de caracteres foi removida para simplificar,
+    // já que o contador visual também foi removido.
+    // Se precisar reimplementar, usar quillEditor.getText().length.
+    // else if (quillEditor && editorType === 'curiosidade') {
+    //   const textoSimples = quillEditor.getText().trim();
+    //   if (textoSimples.length > 500) {
+    //     Toast.show('O texto da curiosidade deve ter no máximo 500 caracteres visíveis.', 'error');
+    //     isValid = false;
+    //   }
+    // }
     
     if (!data) {
       Toast.show('A data da curiosidade é obrigatória.', 'error');
@@ -671,9 +671,13 @@ const initEditorPage = async () => {
     if (editorType === 'post') {
       postForm.classList.remove('hidden');
       curiosidadeForm.classList.add('hidden');
-    } else {
+      initQuillEditor('#editor-container', '#post-corpo', 'Comece a escrever a notícia aqui...');
+      initSlugGenerator();
+      initImageUpload(); // initImageUpload usa editorType para o caminho do upload.
+    } else if (editorType === 'curiosidade') {
       postForm.classList.add('hidden');
       curiosidadeForm.classList.remove('hidden');
+      initQuillEditor('#curiosidade-editor-container', '#curiosidade-texto', 'Digite a curiosidade aqui...');
     }
   }
   
@@ -686,15 +690,7 @@ const initEditorPage = async () => {
   if (editorTypeInput) editorTypeInput.value = editorType;
   if (editorModeInput) editorModeInput.value = editorMode;
   
-  // Inicializar componentes do editor
-  // Inicializa o editor Quill apenas para posts, não para curiosidades
-  if (editorType === 'post') {
-    initQuillEditor();
-    initSlugGenerator();
-    initImageUpload();
-  }
-  
-  // Inicializa contadores de caracteres para ambos os tipos
+  // Inicializa contadores de caracteres (agora apenas para resumo de post)
   initCharCounters();
   
   // Se estamos no modo edição, carregar dados

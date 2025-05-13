@@ -240,12 +240,13 @@ function renderCuriosidades(curiosidades, append = false) {
     const date = new Date(curiosidade.data);
     const formattedDate = Utils.formatDate(date);
     
+    // Montar o HTML do card, deixando o conteúdo da curiosidade para ser inserido via innerHTML
     card.innerHTML = `
       <div class="curiosity-icon">
         <i class="fas fa-lightbulb"></i>
       </div>
       <div class="curiosity-content">
-        <p>${curiosidade.texto}</p>
+        <!-- O conteúdo HTML da curiosidade (do Quill) será inserido aqui -->
       </div>
       <div class="curiosity-meta">
         <span class="date"><i class="fas fa-calendar-alt"></i> ${formattedDate}</span>
@@ -254,6 +255,12 @@ function renderCuriosidades(curiosidades, append = false) {
         </button>
       </div>
     `;
+    
+    // Inserir o conteúdo HTML da curiosidade usando innerHTML
+    const contentDiv = card.querySelector('.curiosity-content');
+    if (contentDiv) {
+      contentDiv.innerHTML = curiosidade.texto; // Supondo que curiosidade.texto contém o HTML do Quill
+    }
     
     container.appendChild(card);
     
