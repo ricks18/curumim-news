@@ -385,7 +385,7 @@ const handleDeleteItem = async (e) => {
   const cancelDeleteBtn = document.getElementById('cancel-delete');
   const closeModalBtn = deleteModal.querySelector('.close-modal');
   
-  if (deleteModal && Modal) {
+  if (deleteModal && typeof Modal !== 'undefined' && Modal && Modal.open && Modal.close) {
     // Preencher informações do item, se disponíveis
     if (deleteItemInfo && itemInfo) {
       if (itemType === 'post') {
@@ -403,19 +403,15 @@ const handleDeleteItem = async (e) => {
       deleteItemInfo.innerHTML = `<p>Item ID: ${itemId}</p>`;
     }
     
-    // Abrir o modal
     Modal.open('delete-modal');
     
-    // Configurar botões do modal
     const handleConfirm = async () => {
-      // Remover event listeners temporários antes de processar
       confirmDeleteBtn.removeEventListener('click', handleConfirm);
       cancelDeleteBtn.removeEventListener('click', handleCancel);
       closeModalBtn.removeEventListener('click', handleCancel);
       
       try {
         let result;
-        
         if (itemType === 'post') {
           result = await api.posts.delete(itemId);
         } else if (itemType === 'curiosidade') {
@@ -423,16 +419,8 @@ const handleDeleteItem = async (e) => {
         }
         
         if (result.success) {
-          Toast.show(`${itemName.charAt(0).toUpperCase() + itemName.slice(1)} excluída com sucesso!`, 'success');
-          
-          // Recarrega a tabela correspondente
-          if (itemType === 'post') {
-            loadNewsTable();
-          } else if (itemType === 'curiosidade') {
-            loadCuriositiesTable();
-          }
-          
-          // Atualiza as estatísticas
+          Toast.show(`${itemName.charAt(0).toUpperCase() + itemName.slice(1)} excluído(a) com sucesso!`, 'success');
+          if (itemType === 'post') loadNewsTable(); else loadCuriositiesTable();
           loadDashboardStats();
         } else {
           Toast.show(`Erro ao excluir ${itemName}: ${result.error || 'Erro desconhecido'}`, 'error');
@@ -441,31 +429,24 @@ const handleDeleteItem = async (e) => {
         console.error(`handleDeleteItem: Erro ao excluir ${itemName}:`, err);
         Toast.show(`Erro grave ao excluir ${itemName}`, 'error');
       }
-      
-      // Fechar o modal
       Modal.close('delete-modal');
     };
     
     const handleCancel = () => {
-      // Remover event listeners temporários ao cancelar
       confirmDeleteBtn.removeEventListener('click', handleConfirm);
       cancelDeleteBtn.removeEventListener('click', handleCancel);
       closeModalBtn.removeEventListener('click', handleCancel);
-      
       Modal.close('delete-modal');
     };
     
-    // Adicionar event listeners temporários
     confirmDeleteBtn.addEventListener('click', handleConfirm);
     cancelDeleteBtn.addEventListener('click', handleCancel);
     closeModalBtn.addEventListener('click', handleCancel);
     
-  } else {
-    // Fallback para browsers sem suporte a modal ou se o modal não estiver disponível
+  } else { // Fallback se Modal não estiver disponível
     if (confirm(`Tem certeza que deseja excluir esta ${itemName}? Esta ação não poderá ser desfeita.`)) {
       try {
         let result;
-        
         if (itemType === 'post') {
           result = await api.posts.delete(itemId);
         } else if (itemType === 'curiosidade') {
@@ -473,16 +454,8 @@ const handleDeleteItem = async (e) => {
         }
         
         if (result.success) {
-          Toast.show(`${itemName.charAt(0).toUpperCase() + itemName.slice(1)} excluída com sucesso!`, 'success');
-          
-          // Recarrega a tabela correspondente
-          if (itemType === 'post') {
-            loadNewsTable();
-          } else if (itemType === 'curiosidade') {
-            loadCuriositiesTable();
-          }
-          
-          // Atualiza as estatísticas
+          Toast.show(`${itemName.charAt(0).toUpperCase() + itemName.slice(1)} excluído(a) com sucesso!`, 'success');
+          if (itemType === 'post') loadNewsTable(); else loadCuriositiesTable();
           loadDashboardStats();
         } else {
           Toast.show(`Erro ao excluir ${itemName}: ${result.error || 'Erro desconhecido'}`, 'error');
@@ -508,9 +481,8 @@ const searchNoticias = async (query) => {
     return;
   }
   
-  // Exibe loader
   tableBody.innerHTML = '<tr><td colspan="6" class="loading-row"><div class="loader"></div></td></tr>';
-  if (paginationContainer) paginationContainer.innerHTML = ''; // Limpa paginação durante busca
+  if (paginationContainer) paginationContainer.innerHTML = ''; 
   
   try {
     const { success, data, error } = await api.posts.search(query);
@@ -555,18 +527,15 @@ const searchNoticias = async (query) => {
         tableBody.appendChild(row);
       });
       
-      // Exibe mensagem de resultados da busca
-      const searchResults = document.createElement('tr');
-      searchResults.innerHTML = `<td colspan="6" class="search-results">Resultados da busca por "${query}": ${data.length} notícia(s) encontrada(s) <button id="clear-search-noticias" class="btn-clear-search">Limpar busca</button></td>`;
-      tableBody.insertBefore(searchResults, tableBody.firstChild);
+      const searchResultsHeader = document.createElement('tr');
+      searchResultsHeader.innerHTML = `<td colspan="6" class="search-results-info">Resultados da busca por "${query}": ${data.length} notícia(s) encontrada(s). <button id="clear-search-noticias" class="btn-clear-search">Limpar busca</button></td>`;
+      tableBody.insertBefore(searchResultsHeader, tableBody.firstChild);
       
-      // Configura botão de limpar busca
       document.getElementById('clear-search-noticias').addEventListener('click', () => {
         document.getElementById('search-noticias').value = '';
-        loadNewsTable(1); // Volta para a página 1 ao limpar busca
+        loadNewsTable(1); 
       });
       
-      // Configura os botões de exclusão
       const deleteButtons = tableBody.querySelectorAll('.btn-delete');
       deleteButtons.forEach(button => {
         button.addEventListener('click', handleDeleteItem);
@@ -580,8 +549,6 @@ const searchNoticias = async (query) => {
     console.error('searchNoticias: Erro catastrófico na busca de notícias:', err);
     tableBody.innerHTML = '<tr><td colspan="6" class="error-row">Erro grave ao buscar notícias</td></tr>';
   }
-  
-  console.log(`searchNoticias: Busca por "${query}" concluída.`);
 };
 
 /**
@@ -592,30 +559,30 @@ const searchCuriosidades = async (query) => {
   console.log(`searchCuriosidades: Buscando curiosidades com o termo "${query}"...`);
   const tableBody = document.querySelector('#curiosidades-table tbody');
   const paginationContainer = document.getElementById('curiosidades-pagination');
+
   if (!tableBody) {
     console.error('searchCuriosidades: Elemento tbody da tabela de curiosidades não encontrado');
     return;
   }
-  
-  // Exibe loader
+
   tableBody.innerHTML = '<tr><td colspan="5" class="loading-row"><div class="loader"></div></td></tr>';
-  if (paginationContainer) paginationContainer.innerHTML = ''; // Limpa paginação durante busca
-  
+  if (paginationContainer) paginationContainer.innerHTML = '';
+
   try {
     const { success, data, error } = await api.curiosidades.search(query);
-    
+
     if (success && data) {
       if (data.length === 0) {
         tableBody.innerHTML = `<tr><td colspan="5" class="empty-row">Nenhuma curiosidade encontrada para "${query}"</td></tr>`;
         return;
       }
-      
+
       tableBody.innerHTML = '';
-      
+
       data.forEach(curiosidade => {
         const createdAt = new Date(curiosidade.created_at).toLocaleDateString('pt-BR');
         const row = document.createElement('tr');
-        
+
         row.innerHTML = `
           <td>${curiosidade.texto.substring(0, 100)}${curiosidade.texto.length > 100 ? '...' : ''}</td>
           <td>${curiosidade.autor || 'Admin'}</td>
@@ -635,27 +602,23 @@ const searchCuriosidades = async (query) => {
             </div>
           </td>
         `;
-        
         tableBody.appendChild(row);
       });
-      
-      // Exibe mensagem de resultados da busca
-      const searchResults = document.createElement('tr');
-      searchResults.innerHTML = `<td colspan="5" class="search-results">Resultados da busca por "${query}": ${data.length} curiosidade(s) encontrada(s) <button id="clear-search-curiosidades" class="btn-clear-search">Limpar busca</button></td>`;
-      tableBody.insertBefore(searchResults, tableBody.firstChild);
-      
-      // Configura botão de limpar busca
+
+      const searchResultsHeader = document.createElement('tr');
+      searchResultsHeader.innerHTML = `<td colspan="5" class="search-results-info">Resultados da busca por "${query}": ${data.length} curiosidade(s) encontrada(s). <button id="clear-search-curiosidades" class="btn-clear-search">Limpar busca</button></td>`;
+      tableBody.insertBefore(searchResultsHeader, tableBody.firstChild);
+
       document.getElementById('clear-search-curiosidades').addEventListener('click', () => {
         document.getElementById('search-curiosidades').value = '';
-        loadCuriositiesTable(1); // Volta para a página 1 ao limpar busca
+        loadCuriositiesTable(1);
       });
-      
-      // Configura os botões de exclusão
+
       const deleteButtons = tableBody.querySelectorAll('.btn-delete');
       deleteButtons.forEach(button => {
         button.addEventListener('click', handleDeleteItem);
       });
-      
+
     } else {
       console.error('searchCuriosidades: Erro ao buscar curiosidades -', error);
       tableBody.innerHTML = `<tr><td colspan="5" class="error-row">Erro ao buscar curiosidades: ${error || 'Erro desconhecido'}</td></tr>`;
@@ -664,83 +627,153 @@ const searchCuriosidades = async (query) => {
     console.error('searchCuriosidades: Erro catastrófico na busca de curiosidades:', err);
     tableBody.innerHTML = '<tr><td colspan="5" class="error-row">Erro grave ao buscar curiosidades</td></tr>';
   }
-  
-  console.log(`searchCuriosidades: Busca por "${query}" concluída.`);
 };
 
 /**
- * Inicializa as funcionalidades do dashboard.
+ * Exibe as informações do perfil do usuário no dashboard.
+ * @param {object} user - O objeto do usuário (geralmente do Supabase Auth).
  */
-const initDashboard = () => {
+const displayUserProfile = (user) => {
+  console.log('displayUserProfile: Tentando exibir informações do usuário:', user);
+  const userNameElement = document.getElementById('admin-name');
+  
+  if (userNameElement) {
+    if (user && user.email) {
+      userNameElement.textContent = user.email;
+      console.log('displayUserProfile: Nome do usuário atualizado para:', user.email);
+    } else if (user) {
+      userNameElement.textContent = 'Usuário Logado';
+      console.warn('displayUserProfile: E-mail do usuário não encontrado, usando texto genérico.');
+    } else {
+      console.warn('displayUserProfile: Objeto user é nulo ou indefinido. Nome de usuário não alterado.');
+    }
+  } else {
+    console.error('displayUserProfile: Elemento com ID "admin-name" não encontrado no DOM.');
+  }
+};
+
+/**
+ * Aguarda a disponibilização de componentes/objetos globais necessários.
+ * @param {Array<string>} componentNames - Nomes dos componentes a verificar (ex: ['api', 'Modal'])
+ * @param {Function} callback - Função a ser chamada quando todos os componentes estiverem prontos
+ * @param {number} timeout - Tempo máximo de espera em ms
+ * @param {number} interval - Intervalo entre verificações em ms
+ */
+const waitForComponents = (componentNames, callback, timeout = 5000, interval = 100) => {
+    console.log(`waitForComponents: Aguardando por ${componentNames.join(', ')}...`);
+    let elapsedTime = 0;
+
+    const checkComponents = () => {
+        const allAvailable = componentNames.every(name => {
+            // Verifica se o componente existe no escopo global (window)
+            // Adicione verificações mais específicas se necessário (ex: typeof window[name] === 'function')
+            return typeof window[name] !== 'undefined' || (name === 'api' && typeof api !== 'undefined' && api.auth);
+        });
+
+        if (allAvailable) {
+            console.log(`waitForComponents: Componentes ${componentNames.join(', ')} estão disponíveis.`);
+            callback();
+        } else if (elapsedTime < timeout) {
+            elapsedTime += interval;
+            setTimeout(checkComponents, interval);
+        } else {
+            console.error(`waitForComponents: Timeout! Componentes ${componentNames.join(', ')} não ficaram disponíveis em ${timeout}ms.`);
+            Toast.show(`Erro crítico: Falha ao carregar componentes essenciais do dashboard (${componentNames.join(', ')}). Tente recarregar a página.`, 'error', 10000);
+        }
+    };
+    checkComponents();
+};
+
+/**
+ * Inicializa o dashboard, configurando abas, carregando dados e autenticação.
+ */
+const initDashboard = async () => {
   console.log('initDashboard: Inicializando o dashboard...');
-  loadDashboardStats();
-  setupTabs();
-  // loadNewsTable(); // Carrega a tabela de notícias por padrão (primeira aba)
-  // Nota: setupTabs agora chama a função de carregamento da aba ativa, então não precisamos chamar aqui explicitamente
-  
-  // Configura os eventos de busca
-  const searchNoticiasBtn = document.getElementById('search-noticias-btn');
+
+  const user = api.auth.getCurrentUser(); 
+  console.log('initDashboard: Usuário atual:', user);
+
+  if (!user) {
+    console.warn('initDashboard: Nenhum usuário logado. A proteção de rota no admin.js deveria ter atuado.');
+    displayUserProfile(null); 
+  } else {
+    displayUserProfile(user);
+  }
+
+  await loadDashboardStats();
+  setupTabs(); 
+
   const searchNoticiasInput = document.getElementById('search-noticias');
-  const searchCuriosidadesBtn = document.getElementById('search-curiosidades-btn');
-  const searchCuriosidadesInput = document.getElementById('search-curiosidades');
-  
-  if (searchNoticiasBtn && searchNoticiasInput) {
-    searchNoticiasBtn.addEventListener('click', () => {
+  const searchNoticiasBtn = document.getElementById('search-noticias-btn');
+  if (searchNoticiasInput && searchNoticiasBtn) {
+    const performSearchNoticias = () => {
       const query = searchNoticiasInput.value.trim();
-      if (query) {
-        searchNoticias(query);
-      } else {
-        loadNewsTable(1); // Carrega todas se a busca estiver vazia
-      }
-    });
-    
+      if (query) searchNoticias(query);
+    };
+    searchNoticiasBtn.addEventListener('click', performSearchNoticias);
     searchNoticiasInput.addEventListener('keypress', (e) => {
-      if (e.key === 'Enter') {
-        searchNoticiasBtn.click();
-      }
+      if (e.key === 'Enter') performSearchNoticias();
     });
+  } else {
+    console.warn('initDashboard: Elementos de busca de notícias não encontrados.');
   }
-  
-  if (searchCuriosidadesBtn && searchCuriosidadesInput) {
-    searchCuriosidadesBtn.addEventListener('click', () => {
+
+  const searchCuriosidadesInput = document.getElementById('search-curiosidades');
+  const searchCuriosidadesBtn = document.getElementById('search-curiosidades-btn'); 
+  if (searchCuriosidadesInput && searchCuriosidadesBtn) {
+     const performSearchCuriosidades = () => {
       const query = searchCuriosidadesInput.value.trim();
-      if (query) {
-        searchCuriosidades(query);
-      } else {
-        loadCuriositiesTable(1); // Carrega todas se a busca estiver vazia
-      }
-    });
-    
+      if (query) searchCuriosidades(query);
+    };
+    searchCuriosidadesBtn.addEventListener('click', performSearchCuriosidades);
     searchCuriosidadesInput.addEventListener('keypress', (e) => {
-      if (e.key === 'Enter') {
-        searchCuriosidadesBtn.click();
-      }
+      if (e.key === 'Enter') performSearchCuriosidades();
     });
+  } else {
+    console.warn('initDashboard: Elementos de busca de curiosidades não encontrados.');
   }
   
+  const logoutButton = document.getElementById('logout-btn');
+  if (logoutButton) {
+    logoutButton.addEventListener('click', async () => {
+      console.log('initDashboard: Botão de logout clicado.');
+      const { error } = await api.auth.logout();
+      if (error) {
+        Toast.show(`Erro ao fazer logout: ${error.message}`, 'error');
+      } else {
+        Toast.show('Logout realizado com sucesso!', 'success');
+      }
+    });
+  } else {
+    console.warn('initDashboard: Botão de logout não encontrado.');
+  }
+
   console.log('initDashboard: Dashboard inicializado.');
 };
 
-// Garante que o admin.js já tenha feito a verificação de auth
-// e que o usuário esteja de fato no dashboard.
-if (document.body.classList.contains('admin-dashboard')) {
-    // Verificamos se os componentes principais do app já foram inicializados
-    const waitForComponents = () => {
-        // Verifica se Modal e Toast estão disponíveis
-        if (typeof Modal === 'undefined' || typeof Toast === 'undefined') {
-            // Espera 100ms e tenta novamente
-            console.log('dashboard.js: Aguardando inicialização dos componentes...');
-            setTimeout(waitForComponents, 100);
-            return;
-        }
-        
-        console.log('dashboard.js: Componentes disponíveis, inicializando dashboard...');
-        // Inicia o dashboard quando os componentes estiverem disponíveis
-        initDashboard();
+// Remover chamadas soltas de initDashboard() ou listeners DOMContentLoaded antigos.
+// Adicionar o novo listener:
+document.addEventListener('DOMContentLoaded', () => {
+  console.log('DOMContentLoaded (dashboard.js): Evento disparado.');
+  
+  const waitForApi = (callback, timeout = 3000, interval = 100) => {
+    let elapsedTime = 0;
+    const check = () => {
+      if (typeof api !== 'undefined' && api.auth && typeof api.auth.getCurrentUser === 'function') {
+        callback();
+      } else if (elapsedTime < timeout) {
+        elapsedTime += interval;
+        setTimeout(check, interval);
+      } else {
+        console.error('Timeout! API ou api.auth não ficou disponível.');
+        Toast.show('Erro crítico: Falha ao carregar API. Tente recarregar.', 'error', 10000);
+      }
     };
-    
-    // Inicia o processo de espera por componentes
-    setTimeout(waitForComponents, 0);
-} else {
-    console.log('dashboard.js: Não estamos na página do dashboard, script não será totalmente inicializado.');
-} 
+    check();
+  };
+
+  waitForApi(() => {
+    console.log('DOMContentLoaded (dashboard.js): API está disponível. Chamando initDashboard.');
+    initDashboard();
+  });
+}); 
