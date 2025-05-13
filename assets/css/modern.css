@@ -58,6 +58,30 @@
   --header-height: 70px;
 }
 
+/* Definições para o Tema Escuro */
+[data-theme="dark"] {
+  /* Cores de Interface (Escuro) */
+  --cor-fundo: #121212; /* Fundo quase preto */
+  --cor-fundo-card: #1E1E1E; /* Cinza muito escuro para cards */
+  --cor-texto: #E0E0E0; /* Texto principal claro */
+  --cor-texto-claro: #BDBDBD; /* Texto secundário um pouco mais escuro */
+  --cor-borda: #333333; /* Borda sutil */
+  --cor-borda-leve: #2A2A2A; /* Borda ainda mais sutil */
+
+  /* Variáveis específicas usadas nos componentes */
+  --cinza-medio-dark: #2C2C2C; /* Um cinza um pouco mais claro que o fundo do card */
+  --cinza-borda-dark: #444444; /* Borda para cards no escuro */
+  --cor-texto-dark: #E0E0E0; /* Texto principal claro */
+  --cor-texto-secundario-dark: #BDBDBD; /* Texto secundário claro */
+  --cor-icone-dark: #9E9E9E; /* Ícones em cinza claro */
+  --cor-link-hover-dark: var(--amarelo-mostarda);
+
+  /* Sombras (podem ser mais sutis no escuro) */
+  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.2);
+  --shadow-md: 0 5px 10px rgba(0, 0, 0, 0.2);
+  --shadow-lg: 0 10px 20px rgba(0, 0, 0, 0.18);
+}
+
 /* Reset e Estilos Base */
 *, *::before, *::after {
   box-sizing: border-box;
