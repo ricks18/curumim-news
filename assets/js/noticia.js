@@ -102,14 +102,23 @@ function renderizarNoticia(noticia) {
   // Atualizar fonte original
   const fonteEl = document.querySelector('.source-link');
   if (fonteEl) {
-    const fonteName = noticia.fonte_original || 'Curumim News';
-    fonteEl.textContent = fonteName;
-    
-    // Adicionar link para a fonte original se existir uma URL
-    if (noticia.fonte_url) {
-      fonteEl.href = noticia.fonte_url;
+    if (noticia.fonte && noticia.fonte.trim() !== '') {
+      try {
+        const urlDaFonte = new URL(noticia.fonte);
+        fonteEl.textContent = urlDaFonte.hostname;
+        fonteEl.href = noticia.fonte;
+        fonteEl.setAttribute('target', '_blank'); // Manter o target blank
+        fonteEl.setAttribute('rel', 'noopener noreferrer');
+      } catch (e) {
+        // Se a URL for inválida, mostrar o texto da fonte como fallback, sem link
+        fonteEl.textContent = noticia.fonte; 
+        fonteEl.href = '#';
+        fonteEl.removeAttribute('target');
+        console.warn('URL da fonte inválida:', noticia.fonte);
+      }
     } else {
-      fonteEl.href = '#';
+      fonteEl.textContent = 'Curumim News';
+      fonteEl.href = '/'; // Link para a home se não houver fonte
       fonteEl.removeAttribute('target');
     }
   }

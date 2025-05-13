@@ -1804,34 +1804,93 @@ button {
 
 /* Paginação */
 .table-pagination {
+  margin-top: 20px;
   display: flex;
-  align-items: center;
   justify-content: center;
-  gap: var(--spacing-sm);
+  align-items: center;
 }
 
-.pagination-btn {
-  min-width: 36px;
-  height: 36px;
+ul.pagination {
   display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: var(--radius-sm);
-  border: 1px solid var(--cor-borda);
-  background-color: var(--cor-fundo);
-  color: var(--cinza-escuro);
-  transition: border-color var(--transition-fast), background-color var(--transition-fast);
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  overflow: hidden; /* Para os cantos arredondados dos itens */
 }
 
-.pagination-btn:hover {
-  border-color: var(--verde-escuro);
-  color: var(--verde-escuro);
+ul.pagination li.page-item {
+  margin: 0; /* Remove margens entre itens */
 }
 
-.pagination-btn.active {
-  background-color: var(--verde-escuro);
-  color: white;
-  border-color: var(--verde-escuro);
+ul.pagination li.page-item a.page-link {
+  display: inline-block;
+  padding: 10px 15px;
+  text-decoration: none;
+  color: var(--cor-texto-claro); /* Cor padrão para texto do link */
+  background-color: var(--cor-fundo-card); /* Fundo padrão */
+  border: 1px solid var(--cor-borda-input); /* Borda sutil */
+  border-left: none; /* Remove borda esquerda para evitar duplicação */
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+ul.pagination li.page-item:first-child a.page-link {
+  border-left: 1px solid var(--cor-borda-input); /* Adiciona borda esquerda ao primeiro item */
+  border-top-left-radius: 4px;
+  border-bottom-left-radius: 4px;
+}
+
+ul.pagination li.page-item:last-child a.page-link {
+  border-top-right-radius: 4px;
+  border-bottom-right-radius: 4px;
+}
+
+ul.pagination li.page-item a.page-link:hover {
+  background-color: var(--cor-primaria-escura); /* Verde mais escuro no hover */
+  color: #fff; /* Texto branco no hover */
+}
+
+ul.pagination li.page-item.active a.page-link {
+  background-color: var(--cor-primaria); /* Verde principal para item ativo */
+  color: #fff; /* Texto branco para item ativo */
+  border-color: var(--cor-primaria-escura);
+  font-weight: bold;
+}
+
+ul.pagination li.page-item.disabled a.page-link {
+  color: var(--cor-texto-desabilitado);
+  background-color: var(--cor-fundo-desabilitado);
+  pointer-events: none; /* Desabilita cliques */
+  border-color: var(--cor-borda-input);
+}
+
+/* Ajustes para tema escuro na paginação */
+[data-theme="dark"] ul.pagination li.page-item a.page-link {
+  color: var(--cor-texto); /* Usa a variável de texto do tema escuro */
+  background-color: var(--cinza-escuro); /* Fundo mais escuro */
+  border-color: var(--cinza-medio);
+}
+
+[data-theme="dark"] ul.pagination li.page-item:first-child a.page-link {
+  border-left-color: var(--cinza-medio);
+}
+
+[data-theme="dark"] ul.pagination li.page-item a.page-link:hover {
+  background-color: var(--cor-primaria); /* Mantém verde no hover para destaque */
+  color: #fff;
+}
+
+[data-theme="dark"] ul.pagination li.page-item.active a.page-link {
+  background-color: var(--cor-primaria-escura); /* Verde escuro para ativo no tema escuro */
+  color: #fff;
+  border-color: var(--cor-primaria);
+}
+
+[data-theme="dark"] ul.pagination li.page-item.disabled a.page-link {
+  color: var(--cinza-medio); /* Cor mais clara para desabilitado */
+  background-color: var(--cinza-muito-escuro);
+  border-color: var(--cinza-escuro);
 }
 
 /* Tema Escuro para área Admin */

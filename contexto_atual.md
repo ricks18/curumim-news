@@ -11,7 +11,7 @@
 - **Novo layout da página principal**: Implementação de uma interface moderna e interativa baseada na imagem de referência, com cards de notícias estilizados e integração com o banco de dados Supabase.
 - **Sistema de visualizações implementado**: Contagem real de visualizações para notícias e curiosidades com atualização do dashboard administrativo para exibir dados reais.
 - **Página de notícia individual reformulada**: Novo design no estilo de jornal tradicional com fonte Georgia, lead destacado, e tags extraídas do conteúdo.
-- **Otimização da seção "ULTIMAS NOTÍCIAS"**: Exibição das 3 notícias mais recentes sem duplicação em "MAIS NOTÍCIAS".
+- **Implementação parcial da seção "ULTIMAS NOTÍCIAS"**: O layout foi implementado, mas ainda exibe conteúdo estático de placeholder em vez das 3 notícias mais recentes da base de dados.
 
 ## Conversas e Ajustes Recentes
 1. **Especificação inicial do projeto Curumim News**:
@@ -80,6 +80,11 @@
    - Eliminação da bolinha com iniciais "GM" no cabeçalho
    - Sistema para evitar duplicação de conteúdo entre as seções
 
+10. **Refinamentos de Interface e Conteúdo (Sessão Atual)**:
+    - Correção da exibição da fonte original na página de notícia individual para usar o campo `fonte` e mostrar o `hostname` como nome da fonte.
+    - Repaginação visual completa da seção de Curiosidades, com novo layout em cards, ícones, e CSS aprimorado para melhor estética e responsividade.
+    - Repaginação visual completa da página "Sobre Nós", com nova estrutura HTML semântica, seções de Hero, História, Missão/Valores, Equipe (com 5 placeholders) e Contato. Criação de CSS dedicado (`sobre.css`) para um design profissional.
+
 ## Detalhes da API de Clima
 - **Escopo Atualizado**: Widget compacto exibindo temperatura atual, cidade e ícone de clima das capitais da região Norte
 - **Cidades Implementadas**: Manaus (AM), Belém (PA), Porto Velho (RO), Macapá (AP), Rio Branco (AC), Boa Vista (RR) e Palmas (TO)
@@ -107,25 +112,37 @@
 - **Extração inteligente de tags**: Algoritmo para identificar palavras-chave relevantes no conteúdo
 - **Sistema robusto de tratamento de erros**: Fallbacks e alternativas para quando operações primárias falham
 - **Funcionalidade de busca**: Sistema de pesquisa completo com página de resultados dedicada
+- **Exibição da Fonte em Notícias**: Ajuste no script `assets/js/noticia.js` para exibir corretamente o link e nome da fonte original da notícia (`item.fonte`).
+- **Repaginação da Seção de Curiosidades**:
+    - Modificação de `assets/js/curiosidades.js` para renderizar curiosidades em formato de card com ícones e metadados aprimorados.
+    - Adição e múltiplos refinamentos de estilos CSS em `assets/css/modern.css` para o novo layout de cards e grid responsivo.
+- **Repaginação da Página Sobre Nós**:
+    - Reestruturação completa do `sobre.html` com seções semânticas (Hero, História, Missão/Valores, Equipe com placeholders, Contato).
+    - Criação de arquivo CSS dedicado (`assets/css/sobre.css`) para estilização abrangente e profissional da página, incluindo tema claro e escuro.
 
 ## Próximos Passos
-1. **Expansão do Layout**:
-   - Aplicar o novo design nas páginas de detalhe da notícia, curiosidades e sobre
+1. **Correção Urgente da Seção "ULTIMAS NOTÍCIAS"**:
+   - Implementar carregamento dinâmico das 3 notícias mais recentes do Supabase na seção principal do topo
+   - Substituir os textos de placeholder ("CORINTHIANS É CONVIDADO PARA O MUNDIAL DE CLUBES FIFA", "RAISSA LEAL GANHA O BAGULHO LÁ", "PAPA FRANCISCO MORRE TADINHO") por conteúdo real da base de dados
+   - Certificar-se de que não haja duplicação destas notícias na seção "MAIS NOTÍCIAS"
+
+2. **Expansão do Layout**:
+   - Aplicar o novo design nas páginas de detalhe da notícia.
    - Adicionar mais cards de notícias com paginação ou carregamento infinito
 
-2. **Otimizações de UX**:
+3. **Otimizações de UX**:
    - Aprimorar o sistema de Dark Mode para melhor contraste e legibilidade
    - Adicionar mais animações e transições suaves
    - Melhorar feedback visual durante interações
    - Implementar funcionalidade de compartilhamento em redes sociais
 
-3. **Segurança e Performance**:
+4. **Segurança e Performance**:
    - Revisar políticas de segurança do Supabase
    - Implementar lazy loading para imagens de notícias
    - Otimizar carregamento de recursos (CSS/JS) com bundling
    - Adicionar tratamento robusto de erros na integração com APIs
 
-4. **Sistema de visualizações**:
+5. **Sistema de visualizações**:
    - Adicionar análise mais detalhada com gráficos no dashboard
    - Implementar filtros para visualizações por categoria e período
    - Desenvolver métricas para identificar conteúdo mais popular
@@ -140,6 +157,7 @@
 - Correção do contraste no modo escuro para melhorar acessibilidade
 
 ## Pendências e Decisões
+- Implementar a correção da seção "ULTIMAS NOTÍCIAS" para exibir dados reais do Supabase
 - Definir estratégia para implementar recursos de compartilhamento em redes sociais
 - Decidir sobre implementação de PWA para melhor experiência mobile
 - Avaliar necessidade de cache local para dados climáticos para reduzir chamadas à API

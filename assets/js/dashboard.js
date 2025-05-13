@@ -1,5 +1,8 @@
 import api from './api.js';
-import { Utils, Toast, Loader, Modal } from './main.js';
+// Remover importação de main.js
+// import { Utils, Toast, Loader, Modal } from './main.js';
+// Importar ToastManager como Toast
+import Toast from './modules/toastManager.js';
 
 console.log('dashboard.js carregado');
 
@@ -28,7 +31,7 @@ const loadDashboardStats = async () => {
       console.log('loadDashboardStats: Estatísticas carregadas e exibidas.');
     } else {
       console.error('loadDashboardStats: Erro ao carregar estatísticas -', error);
-      Toast.show(error || 'Não foi possível carregar as estatísticas.', 'error');
+      Toast.show(error.message || 'Não foi possível carregar as estatísticas.', 'error');
       // Preencher com 'Erro' ou manter os zeros em caso de falha
       document.getElementById('total-noticias').textContent = '-';
       document.getElementById('total-curiosidades').textContent = '-';
@@ -121,10 +124,86 @@ const setupTabs = () => {
 };
 
 /**
- * Carrega a tabela de notícias
+ * Renderiza os controles de paginação para uma tabela
+ * @param {string} containerId - ID do elemento container da paginação (ex: 'noticias-pagination')
+ * @param {object} paginationData - Objeto com dados da paginação ({ page, limit, total, totalPages })
+ * @param {Function} loadFunction - Função a ser chamada ao clicar em um botão de página (ex: loadNewsTable)
  */
-const loadNewsTable = async () => {
-  console.log('loadNewsTable: Carregando tabela de notícias...');
+const renderPaginationControls = (containerId, paginationData, loadFunction) => {
+  const { page, totalPages } = paginationData;
+  const paginationContainer = document.getElementById(containerId);
+
+  if (!paginationContainer || totalPages <= 1) {
+    if (paginationContainer) paginationContainer.innerHTML = '';
+    return;
+  }
+
+  paginationContainer.innerHTML = ''; // Limpa controles anteriores
+
+  const ul = document.createElement('ul');
+  ul.className = 'pagination';
+
+  // Botão Anterior
+  const prevLi = document.createElement('li');
+  prevLi.className = `page-item ${page === 1 ? 'disabled' : ''}`;
+  const prevLink = document.createElement('a');
+  prevLink.className = 'page-link';
+  prevLink.href = '#';
+  prevLink.textContent = 'Anterior';
+  prevLink.addEventListener('click', (e) => {
+    e.preventDefault();
+    if (page > 1) {
+      loadFunction(page - 1);
+    }
+  });
+  prevLi.appendChild(prevLink);
+  ul.appendChild(prevLi);
+
+  // Lógica para exibir números de página (simplificada por enquanto)
+  // Idealmente, adicionar lógica para "..." se houver muitas páginas
+  for (let i = 1; i <= totalPages; i++) {
+    const pageLi = document.createElement('li');
+    pageLi.className = `page-item ${i === page ? 'active' : ''}`;
+    const pageLink = document.createElement('a');
+    pageLink.className = 'page-link';
+    pageLink.href = '#';
+    pageLink.textContent = i;
+    pageLink.addEventListener('click', (e) => {
+      e.preventDefault();
+      if (i !== page) {
+        loadFunction(i);
+      }
+    });
+    pageLi.appendChild(pageLink);
+    ul.appendChild(pageLi);
+  }
+
+  // Botão Próximo
+  const nextLi = document.createElement('li');
+  nextLi.className = `page-item ${page === totalPages ? 'disabled' : ''}`;
+  const nextLink = document.createElement('a');
+  nextLink.className = 'page-link';
+  nextLink.href = '#';
+  nextLink.textContent = 'Próximo';
+  nextLink.addEventListener('click', (e) => {
+    e.preventDefault();
+    if (page < totalPages) {
+      loadFunction(page + 1);
+    }
+  });
+  nextLi.appendChild(nextLink);
+  ul.appendChild(nextLi);
+
+  paginationContainer.appendChild(ul);
+};
+
+/**
+ * Carrega a tabela de notícias
+ * @param {number} page - Número da página a carregar
+ * @param {number} limit - Número de itens por página
+ */
+const loadNewsTable = async (page = 1, limit = 10) => {
+  console.log(`loadNewsTable: Carregando página ${page} da tabela de notícias...`);
   const tableBody = document.querySelector('#noticias-table tbody');
   if (!tableBody) {
     console.error('loadNewsTable: Elemento tbody da tabela de notícias não encontrado');
@@ -135,7 +214,7 @@ const loadNewsTable = async () => {
   tableBody.innerHTML = '<tr><td colspan="6" class="loading-row"><div class="loader"></div></td></tr>';
   
   try {
-    const { success, data, error } = await api.posts.getList();
+    const { success, data, pagination, error } = await api.posts.getList(page, limit);
     
     if (success && data) {
       if (data.length === 0) {
@@ -183,6 +262,9 @@ const loadNewsTable = async () => {
         button.addEventListener('click', handleDeleteItem);
       });
       
+      // Renderiza a paginação
+      renderPaginationControls('noticias-pagination', pagination, loadNewsTable);
+      
     } else {
       console.error('loadNewsTable: Erro ao carregar notícias -', error);
       tableBody.innerHTML = `<tr><td colspan="6" class="error-row">Erro ao carregar notícias: ${error || 'Erro desconhecido'}</td></tr>`;
@@ -197,9 +279,11 @@ const loadNewsTable = async () => {
 
 /**
  * Carrega a tabela de curiosidades
+ * @param {number} page - Número da página a carregar
+ * @param {number} limit - Número de itens por página
  */
-const loadCuriositiesTable = async () => {
-  console.log('loadCuriositiesTable: Carregando tabela de curiosidades...');
+const loadCuriositiesTable = async (page = 1, limit = 10) => {
+  console.log(`loadCuriositiesTable: Carregando página ${page} da tabela de curiosidades...`);
   const tableBody = document.querySelector('#curiosidades-table tbody');
   if (!tableBody) {
     console.error('loadCuriositiesTable: Elemento tbody da tabela de curiosidades não encontrado');
@@ -210,7 +294,7 @@ const loadCuriositiesTable = async () => {
   tableBody.innerHTML = '<tr><td colspan="5" class="loading-row"><div class="loader"></div></td></tr>';
   
   try {
-    const { success, data, error } = await api.curiosidades.getList();
+    const { success, data, pagination, error } = await api.curiosidades.getList(page, limit);
     
     if (success && data) {
       if (data.length === 0) {
@@ -252,6 +336,9 @@ const loadCuriositiesTable = async () => {
       deleteButtons.forEach(button => {
         button.addEventListener('click', handleDeleteItem);
       });
+      
+      // Renderiza a paginação
+      renderPaginationControls('curiosidades-pagination', pagination, loadCuriositiesTable);
       
     } else {
       console.error('loadCuriositiesTable: Erro ao carregar curiosidades -', error);
@@ -415,6 +502,7 @@ const handleDeleteItem = async (e) => {
 const searchNoticias = async (query) => {
   console.log(`searchNoticias: Buscando notícias com o termo "${query}"...`);
   const tableBody = document.querySelector('#noticias-table tbody');
+  const paginationContainer = document.getElementById('noticias-pagination');
   if (!tableBody) {
     console.error('searchNoticias: Elemento tbody da tabela de notícias não encontrado');
     return;
@@ -422,6 +510,7 @@ const searchNoticias = async (query) => {
   
   // Exibe loader
   tableBody.innerHTML = '<tr><td colspan="6" class="loading-row"><div class="loader"></div></td></tr>';
+  if (paginationContainer) paginationContainer.innerHTML = ''; // Limpa paginação durante busca
   
   try {
     const { success, data, error } = await api.posts.search(query);
@@ -474,7 +563,7 @@ const searchNoticias = async (query) => {
       // Configura botão de limpar busca
       document.getElementById('clear-search-noticias').addEventListener('click', () => {
         document.getElementById('search-noticias').value = '';
-        loadNewsTable();
+        loadNewsTable(1); // Volta para a página 1 ao limpar busca
       });
       
       // Configura os botões de exclusão
@@ -502,6 +591,7 @@ const searchNoticias = async (query) => {
 const searchCuriosidades = async (query) => {
   console.log(`searchCuriosidades: Buscando curiosidades com o termo "${query}"...`);
   const tableBody = document.querySelector('#curiosidades-table tbody');
+  const paginationContainer = document.getElementById('curiosidades-pagination');
   if (!tableBody) {
     console.error('searchCuriosidades: Elemento tbody da tabela de curiosidades não encontrado');
     return;
@@ -509,6 +599,7 @@ const searchCuriosidades = async (query) => {
   
   // Exibe loader
   tableBody.innerHTML = '<tr><td colspan="5" class="loading-row"><div class="loader"></div></td></tr>';
+  if (paginationContainer) paginationContainer.innerHTML = ''; // Limpa paginação durante busca
   
   try {
     const { success, data, error } = await api.curiosidades.search(query);
@@ -556,7 +647,7 @@ const searchCuriosidades = async (query) => {
       // Configura botão de limpar busca
       document.getElementById('clear-search-curiosidades').addEventListener('click', () => {
         document.getElementById('search-curiosidades').value = '';
-        loadCuriositiesTable();
+        loadCuriositiesTable(1); // Volta para a página 1 ao limpar busca
       });
       
       // Configura os botões de exclusão
@@ -584,7 +675,8 @@ const initDashboard = () => {
   console.log('initDashboard: Inicializando o dashboard...');
   loadDashboardStats();
   setupTabs();
-  loadNewsTable(); // Carrega a tabela de notícias por padrão (primeira aba)
+  // loadNewsTable(); // Carrega a tabela de notícias por padrão (primeira aba)
+  // Nota: setupTabs agora chama a função de carregamento da aba ativa, então não precisamos chamar aqui explicitamente
   
   // Configura os eventos de busca
   const searchNoticiasBtn = document.getElementById('search-noticias-btn');
@@ -598,7 +690,7 @@ const initDashboard = () => {
       if (query) {
         searchNoticias(query);
       } else {
-        loadNewsTable(); // Carrega todas se a busca estiver vazia
+        loadNewsTable(1); // Carrega todas se a busca estiver vazia
       }
     });
     
@@ -615,7 +707,7 @@ const initDashboard = () => {
       if (query) {
         searchCuriosidades(query);
       } else {
-        loadCuriositiesTable(); // Carrega todas se a busca estiver vazia
+        loadCuriositiesTable(1); // Carrega todas se a busca estiver vazia
       }
     });
     

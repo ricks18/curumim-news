@@ -241,13 +241,16 @@ function renderCuriosidades(curiosidades, append = false) {
     const formattedDate = Utils.formatDate(date);
     
     card.innerHTML = `
+      <div class="curiosity-icon">
+        <i class="fas fa-lightbulb"></i>
+      </div>
       <div class="curiosity-content">
         <p>${curiosidade.texto}</p>
       </div>
       <div class="curiosity-meta">
-        <span class="date">${formattedDate}</span>
-        <button class="btn-share" data-id="${curiosidade.id}">
-          <i class="fas fa-share-alt"></i> Compartilhar
+        <span class="date"><i class="fas fa-calendar-alt"></i> ${formattedDate}</span>
+        <button class="btn-share" data-id="${curiosidade.id}" title="Compartilhar esta curiosidade">
+          <i class="fas fa-share-alt"></i>
         </button>
       </div>
     `;

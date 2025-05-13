@@ -3,9 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Curumim News - Conheça nossa história, missão e valores">
-    <title>Sobre | Curumim News</title>
+    <meta name="description" content="Curumim News - Conheça nossa história, missão, valores e equipe.">
+    <title>Sobre Nós | Curumim News</title>
     <link rel="stylesheet" href="assets/css/modern.css">
+    <link rel="stylesheet" href="assets/css/sobre.css">
     <link rel="icon" type="image/png" href="assets/img/favicon.png">
     <!-- Font Awesome para ícones -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -19,14 +20,16 @@
                 <img src="assets/img/curumimLogo.png" alt="Curumim News Logo">
             </a>
             
-            <div class="search-box">
-                <input type="text" placeholder="Pesquisar notícias..." aria-label="Pesquisar notícias">
-                <button class="voice-search" aria-label="Pesquisa por voz">
-                    <i class="fas fa-microphone"></i>
-                </button>
-                <button class="search-button" aria-label="Buscar">
-                    <i class="fas fa-search"></i>
-                </button>
+            <div class="search-container">
+                 <div class="search-box">
+                    <input type="text" placeholder="Pesquisar notícias..." aria-label="Pesquisar notícias">
+                    <button class="voice-search" aria-label="Pesquisa por voz">
+                        <i class="fas fa-microphone"></i>
+                    </button>
+                    <button class="search-button" aria-label="Buscar">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
             </div>
             
             <nav class="main-nav">
@@ -43,165 +46,138 @@
         </div>
     </header>
 
-    <main>
-        <section class="about-section">
+    <main class="sobre-main">
+        <!-- Seção Hero -->
+        <section class="sobre-hero">
             <div class="container">
-                <h1 class="section-heading">SOBRE O CURUMIM NEWS</h1>
-                
-                <div class="about-content">
-                    <div class="about-image">
-                        <img src="assets/img/office.jpg" alt="Equipe Curumim News">
-                    </div>
-                    
-                    <div class="about-text">
+                <h1>Sobre o Curumim News</h1>
+                <p class="subtitle">Informação de qualidade, imparcial e acessível para todos os brasileiros.</p>
+            </div>
+        </section>
+
+        <!-- Seção História -->
+        <section class="sobre-section historia-section">
+            <div class="container">
+                <div class="section-content">
+                    <div class="text-content">
                         <h2>Nossa História</h2>
-                        <p>Fundado em 2023, o Curumim News nasceu com a missão de levar informação de qualidade e sem viés para todos os brasileiros. O nome "Curumim", que significa "criança" em tupi-guarani, representa nosso compromisso com a pureza e simplicidade da informação, livre de influências externas.</p>
-                        
-                        <p>Começamos como um pequeno blog e hoje somos um dos portais de notícias mais acessados do Brasil, com milhões de acessos mensais e uma equipe dedicada de jornalistas espalhados por todo o país.</p>
-                        
-                        <h2>Nossa Missão</h2>
+                        <p>colocar um texto sobre aqui</p>
+                        <p>colocar outra parte do texto sobre aqui</p>
+                    </div>
+                    <div class="image-content">
+                         <img src="assets/img/placeholder-team.svg" alt="Ilustração da equipe Curumim News"> 
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Seção Missão e Valores -->
+        <section class="sobre-section missao-valores-section">
+            <div class="container">
+                 <div class="section-grid">
+                    <div class="missao-content">
+                        <h2><i class="fas fa-bullseye"></i> Nossa Missão</h2>
                         <p>Fornecer conteúdo jornalístico de qualidade, imparcial e acessível a todos os brasileiros, promovendo o conhecimento e o pensamento crítico através de reportagens, análises e curiosidades que educam e informam.</p>
-                        
-                        <h2>Nossos Valores</h2>
-                        <ul class="values-list">
-                            <li><strong>Verdade:</strong> Comprometimento com a veracidade dos fatos</li>
-                            <li><strong>Imparcialidade:</strong> Cobertura equilibrada e sem viés</li>
-                            <li><strong>Transparência:</strong> Clareza em nossos métodos e fontes</li>
-                            <li><strong>Inovação:</strong> Busca constante por novas formas de contar histórias</li>
-                            <li><strong>Respeito:</strong> Consideração pela diversidade de opiniões e culturas</li>
+                    </div>
+                    <div class="valores-content">
+                        <h2><i class="fas fa-gem"></i> Nossos Valores</h2>
+                        <ul class="valores-list">
+                            <li><i class="fas fa-check-circle"></i> <strong>Verdade:</strong> Comprometimento com a veracidade dos fatos</li>
+                            <li><i class="fas fa-balance-scale"></i> <strong>Imparcialidade:</strong> Cobertura equilibrada e sem viés</li>
+                            <li><i class="fas fa-eye"></i> <strong>Transparência:</strong> Clareza em nossos métodos e fontes</li>
+                            <li><i class="fas fa-lightbulb"></i> <strong>Inovação:</strong> Busca constante por novas formas de contar histórias</li>
+                            <li><i class="fas fa-users"></i> <strong>Respeito:</strong> Consideração pela diversidade de opiniões e culturas</li>
                         </ul>
                     </div>
-                </div>
-                
-                <div class="team-section">
-                    <h2 class="team-heading">Nossa Equipe</h2>
-                    
-                    <div class="team-grid">
-                        <div class="team-member">
-                            <div class="member-photo">
-                                <img src="assets/img/team-1.jpg" alt="Membro da equipe">
-                            </div>
-                            <div class="member-info">
-                                <h3 class="member-name">Ana Silva</h3>
-                                <p class="member-position">Editora-Chefe</p>
-                                <p class="member-bio">Jornalista com mais de 15 anos de experiência em veículos de grande circulação.</p>
-                            </div>
+                 </div>
+            </div>
+        </section>
+
+        <!-- Seção Equipe -->
+        <section class="sobre-section equipe-section">
+            <div class="container">
+                <h2><i class="fas fa-users"></i> Conheça Nossa Equipe</h2>
+                <div class="equipe-grid">
+                    <!-- Membro 1 (Placeholder) -->
+                    <div class="team-member-card">
+                        <div class="member-photo-placeholder">
+                            <i class="fas fa-user"></i>
                         </div>
-                        
-                        <div class="team-member">
-                            <div class="member-photo">
-                                <img src="assets/img/team-2.jpg" alt="Membro da equipe">
-                            </div>
-                            <div class="member-info">
-                                <h3 class="member-name">Pedro Santos</h3>
-                                <p class="member-position">Redator de Esportes</p>
-                                <p class="member-bio">Especialista em jornalismo esportivo, cobre competições nacionais e internacionais.</p>
-                            </div>
-                        </div>
-                        
-                        <div class="team-member">
-                            <div class="member-photo">
-                                <img src="assets/img/team-3.jpg" alt="Membro da equipe">
-                            </div>
-                            <div class="member-info">
-                                <h3 class="member-name">Mariana Costa</h3>
-                                <p class="member-position">Editora de Tecnologia</p>
-                                <p class="member-bio">Pesquisadora e jornalista especializada em tendências tecnológicas e inovação.</p>
-                            </div>
-                        </div>
-                        
-                        <div class="team-member">
-                            <div class="member-photo">
-                                <img src="assets/img/team-4.jpg" alt="Membro da equipe">
-                            </div>
-                            <div class="member-info">
-                                <h3 class="member-name">Carlos Oliveira</h3>
-                                <p class="member-position">Editor de Política</p>
-                                <p class="member-bio">Analista político com formação em Ciências Políticas e mestrado em Relações Internacionais.</p>
-                            </div>
+                        <div class="member-info">
+                            <h3 class="member-name">Nome do Membro</h3>
+                            <p class="member-position">Cargo/Função</p>
+                            <p class="member-bio">Breve descrição sobre a experiência e foco do membro da equipe. Preencha aqui.</p>
                         </div>
                     </div>
-                </div>
-                
-                <div class="contact-section">
-                    <h2 class="contact-heading">Entre em Contato</h2>
-                    
-                    <div class="contact-grid">
-                        <div class="contact-info">
-                            <div class="contact-item">
-                                <i class="fas fa-envelope"></i>
-                                <p>contato@curuminews.com.br</p>
-                            </div>
-                            
-                            <div class="contact-item">
-                                <i class="fas fa-phone"></i>
-                                <p>(11) 5555-1234</p>
-                            </div>
-                            
-                            <div class="contact-item">
-                                <i class="fas fa-map-marker-alt"></i>
-                                <p>Av. Paulista, 1000 - São Paulo, SP</p>
-                            </div>
-                            
-                            <div class="social-media">
-                                <h3>Siga-nos</h3>
-                                <div class="social-icons">
-                                    <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
-                                    <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
-                                    <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
-                                    <a href="#" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
-                                </div>
-                            </div>
+                    <!-- Membro 2 (Placeholder) -->
+                     <div class="team-member-card">
+                        <div class="member-photo-placeholder">
+                            <i class="fas fa-user"></i>
                         </div>
-                        
-                        <div class="contact-form">
-                            <form id="contact-form">
-                                <div class="form-group">
-                                    <label for="nome">Nome</label>
-                                    <input type="text" id="nome" name="nome" required>
-                                </div>
-                                
-                                <div class="form-group">
-                                    <label for="email">E-mail</label>
-                                    <input type="email" id="email" name="email" required>
-                                </div>
-                                
-                                <div class="form-group">
-                                    <label for="assunto">Assunto</label>
-                                    <input type="text" id="assunto" name="assunto" required>
-                                </div>
-                                
-                                <div class="form-group">
-                                    <label for="mensagem">Mensagem</label>
-                                    <textarea id="mensagem" name="mensagem" rows="5" required></textarea>
-                                </div>
-                                
-                                <div class="form-actions">
-                                    <button type="submit" class="btn-submit">Enviar Mensagem</button>
-                                </div>
-                            </form>
+                        <div class="member-info">
+                            <h3 class="member-name">Nome do Membro</h3>
+                            <p class="member-position">Cargo/Função</p>
+                            <p class="member-bio">Breve descrição sobre a experiência e foco do membro da equipe. Preencha aqui.</p>
+                        </div>
+                    </div>
+                    <!-- Membro 3 (Placeholder) -->
+                     <div class="team-member-card">
+                        <div class="member-photo-placeholder">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div class="member-info">
+                            <h3 class="member-name">Nome do Membro</h3>
+                            <p class="member-position">Cargo/Função</p>
+                            <p class="member-bio">Breve descrição sobre a experiência e foco do membro da equipe. Preencha aqui.</p>
+                        </div>
+                    </div>
+                    <!-- Membro 4 (Placeholder) -->
+                     <div class="team-member-card">
+                        <div class="member-photo-placeholder">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div class="member-info">
+                            <h3 class="member-name">Nome do Membro</h3>
+                            <p class="member-position">Cargo/Função</p>
+                            <p class="member-bio">Breve descrição sobre a experiência e foco do membro da equipe. Preencha aqui.</p>
+                        </div>
+                    </div>
+                    <!-- Membro 5 (Placeholder) -->
+                     <div class="team-member-card">
+                        <div class="member-photo-placeholder">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div class="member-info">
+                            <h3 class="member-name">Nome do Membro</h3>
+                            <p class="member-position">Cargo/Função</p>
+                            <p class="member-bio">Breve descrição sobre a experiência e foco do membro da equipe. Preencha aqui.</p>
                         </div>
                     </div>
                 </div>
             </div>
         </section>
+
+         
+
     </main>
 
+    <!-- Widget de Clima -->
     <aside class="weather-widget">
-        <div class="weather-icon">
-            <img src="assets/img/weather-icon.png" alt="Clima">
+        <div class="weather-content">
+            <img src="https://openweathermap.org/img/wn/10d@2x.png" alt="Clima" class="weather-icon" id="weather-icon">
+            <div class="weather-info">
+                <div class="weather-city" id="weather-city">Manaus</div>
+                <span class="weather-temp" id="weather-temp">18°C</span>
+            </div>
         </div>
-        <div class="weather-info">
-            <div class="weather-location">Manaus</div>
-            <div class="weather-temp">18°C</div>
-        </div>
+        <div class="weather-loading">Carregando</div>
     </aside>
 
     <footer class="site-footer">
         <div class="container">
             <div class="footer-content">
                 <div class="footer-logo">
-                    <img src="assets/img/logo-white.png" alt="Curumim News">
+                    <img src="assets/img/curumimLogo.png" alt="Curumim News">
                     <p>O Curumim News é um portal de notícias independente comprometido com a verdade e a qualidade da informação.</p>
                 </div>
                 
@@ -231,7 +207,6 @@
                             <li><a href="/sobre.html">Quem Somos</a></li>
                             <li><a href="#">Política de Privacidade</a></li>
                             <li><a href="#">Termos de Uso</a></li>
-                            <li><a href="/admin/login.html">Área Administrativa</a></li>
                         </ul>
                     </div>
                 </div>
@@ -246,15 +221,16 @@
                 </div>
                 
                 <div class="copyright">
-                    <p>&copy; 2023 Curumim News. Todos os direitos reservados.</p>
+                    <p>&copy; 2025 Curumim News. Todos os direitos reservados.</p>
                 </div>
             </div>
         </div>
     </footer>
 
+    <!-- Toast para notificações -->
+    <div id="toast" class="toast"></div>
+
     <!-- Scripts -->
-    <script type="module" src="assets/js/modern.js"></script>
     <script type="module" src="assets/js/main.js"></script>
-    <script type="module" src="assets/js/sobre.js"></script>
 </body>
 </html> 

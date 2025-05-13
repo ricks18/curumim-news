@@ -337,6 +337,7 @@ const NewsList = {
           <div class="card-meta">
             <span><i class="fas fa-calendar"></i> ${formattedDate}</span>
             <span><i class="fas fa-user"></i> ${item.author_id || 'Redação'}</span>
+            ${item.fonte ? `<span><i class="fas fa-link"></i> Fonte: <a href="${item.fonte}" target="_blank" rel="noopener noreferrer">${new URL(item.fonte).hostname}</a></span>` : ''}
           </div>
           <p class="card-excerpt">${Utils.truncateText(item.resumo, 20)}</p>
           <a href="/noticia.html?slug=${item.slug}" class="card-link">Ler mais <i class="fas fa-arrow-right"></i></a>

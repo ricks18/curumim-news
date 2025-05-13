@@ -6,7 +6,8 @@
  */
 
 import api from './api.js';
-import { Utils, Toast } from './main.js';
+import Toast from './modules/toastManager.js';
+import { Utils } from './main.js';
 
 // Estado da aplicação
 const state = {

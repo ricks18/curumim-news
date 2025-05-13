@@ -1,5 +1,8 @@
 import api from './api.js';
-import { Utils, Toast, Modal, Loader } from './main.js'; // Supondo que Modal e Loader possam ser úteis
+// Remover importações de main.js se forem modulares ou definidas aqui
+// import { Utils, Toast, Modal, Loader } from './main.js'; 
+import { Utils } from './modules/utils.js'; // Manter esta
+import Toast from './modules/toastManager.js'; // Manter esta (corrigido de ToastManager)
 
 console.log('admin.js carregado');
 

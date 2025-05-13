@@ -710,4 +710,166 @@ button {
   .weather-widget {
     display: none;
   }
+}
+
+/* === Estilos da Página de Curiosidades (Refinados) === */
+
+.curiosidades-content .curiosidades-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 2rem;
+    margin-top: 2rem;
+}
+
+.curiosity-card {
+    background-color: var(--cor-fundo-card, #FFFFFF); /* Fallback para branco */
+    border-radius: var(--radius-lg, 12px); /* Raio maior */
+    padding: 1.75rem; /* Mais padding interno */
+    box-shadow: var(--shadow-lg, 0 8px 16px rgba(0,0,0,0.05)); /* Sombra mais suave e elevada */
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border: 1px solid var(--cor-borda, #E0E0E0);
+    position: relative;
+    overflow: hidden;
+    min-height: 180px; /* Altura mínima para consistência */
+}
+
+.curiosity-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08);
+}
+
+.curiosity-card .curiosity-icon {
+    position: absolute;
+    top: -15px; /* Ajustado */
+    left: -15px; /* Ajustado */
+    font-size: 4.5rem; /* Um pouco maior, mas mais sutil com a cor */
+    color: var(--verde-claro); /* Mudança para verde claro, mais sutil */
+    opacity: 0.1; /* Mais sutil */
+    transform: rotate(-20deg);
+    z-index: 0;
+}
+
+.curiosity-card .curiosity-content {
+    margin-bottom: 1.25rem; /* Mais espaço antes dos metadados */
+    flex-grow: 1;
+    z-index: 1;
+}
+
+.curiosity-card .curiosity-content p {
+    font-size: 1.05rem; /* Ligeiramente maior para leitura */
+    line-height: 1.65;
+    color: var(--cor-texto, #333333);
+}
+
+.curiosity-card .curiosity-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: auto;
+    padding-top: 1rem; /* Mais espaço acima */
+    border-top: 1px solid var(--cor-borda-leve, #EEEEEE);
+    z-index: 1;
+}
+
+.curiosity-card .curiosity-meta .date {
+    font-size: 0.875rem; /* Levemente maior */
+    color: var(--cor-texto-claro, #757575);
+    display: flex;
+    align-items: center;
+}
+
+.curiosity-card .curiosity-meta .date i {
+    margin-right: 0.5rem; /* Mais espaço para o ícone */
+    color: var(--verde-escuro); /* Ícone de calendário com verde mais escuro para contraste */
+    font-size: 0.9rem;
+}
+
+.curiosity-card .curiosity-meta .btn-share {
+    background: transparent;
+    border: none;
+    color: var(--verde-escuro); /* Cor principal do botão */
+    font-size: 1.2rem; /* Ícone maior */
+    cursor: pointer;
+    padding: 0.5rem; /* Área de clique maior */
+    border-radius: var(--radius-full);
+    line-height: 1; /* Para alinhar melhor o ícone */
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.curiosity-card .curiosity-meta .btn-share:hover {
+    background-color: var(--verde-claro); /* Fundo verde claro ao passar o mouse */
+    color: var(--verde-escuro); /* Manter cor do ícone */
+}
+
+/* Ajustes para tema escuro (Refinados) */
+[data-theme="dark"] .curiosity-card {
+    background-color: var(--cinza-medio-dark, #2a2a2a);
+    border-color: var(--cor-borda-dark, #3a3a3a);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+}
+
+[data-theme="dark"] .curiosity-card:hover {
+     box-shadow: 0 12px 24px rgba(0, 0, 0, 0.25);
+}
+
+[data-theme="dark"] .curiosity-card .curiosity-icon {
+    color: var(--verde-claro); /* Ícone em verde claro também no tema escuro */
+    opacity: 0.08; /* Ainda mais sutil no escuro */
+}
+
+[data-theme="dark"] .curiosity-card .curiosity-content p {
+    color: var(--cor-texto-secundario-dark, #CCCCCC);
+}
+
+[data-theme="dark"] .curiosity-card .curiosity-meta {
+     border-top-color: var(--cor-borda-leve-dark, #444444);
+}
+
+[data-theme="dark"] .curiosity-card .curiosity-meta .date {
+    color: var(--cor-texto-leve-dark, #AAAAAA);
+}
+
+[data-theme="dark"] .curiosity-card .curiosity-meta .date i {
+     color: var(--verde-claro); /* Ícone de calendário verde claro no tema escuro */
+}
+
+[data-theme="dark"] .curiosity-card .curiosity-meta .btn-share {
+    color: var(--verde-claro);
+}
+
+[data-theme="dark"] .curiosity-card .curiosity-meta .btn-share:hover {
+    background-color: rgba(165, 214, 167, 0.2); /* Verde claro com opacidade no hover */
+    color: var(--verde-claro);
+}
+
+.curiosity-card.highlighted {
+    border-color: var(--amarelo-mostarda, #FBC02D);
+    box-shadow: 0 0 20px rgba(251, 192, 45, 0.5);
+}
+
+[data-theme="dark"] .curiosity-card.highlighted {
+     border-color: var(--amarelo-mostarda, #FBC02D);
+     box-shadow: 0 0 20px rgba(251, 192, 45, 0.6);
+}
+
+/* Remover estilo padrão de lista */
+.curiosidades-grid p.no-results,
+.curiosidades-grid p.error-message {
+    grid-column: 1 / -1; /* Ocupar toda a largura do grid */
+    text-align: center;
+    padding: 2rem;
+    font-size: 1.1rem;
+    color: var(--cor-texto-leve);
+}
+
+[data-theme="dark"] .curiosidades-grid p.no-results,
+[data-theme="dark"] .curiosidades-grid p.error-message {
+    color: var(--cor-texto-leve-dark);
+}
+
+/* Garantir que o container pai ocupe espaço */
+.curiosidades-content {
+    min-height: 300px; /* Altura mínima para evitar colapso enquanto carrega */
 } 
