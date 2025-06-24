@@ -166,19 +166,48 @@
 /* Personalização do widget de clima */
 .weather-widget {
   position: fixed;
+  top: 20px;
   right: 20px;
-  top: 150px;
-  background-color: rgba(255, 255, 255, 0.9);
-  backdrop-filter: blur(5px);
-  border-radius: 16px;
-  padding: 12px;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.05));
+  backdrop-filter: blur(15px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 20px;
+  padding: 20px;
+  color: white;
+  font-family: 'Roboto', sans-serif;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  z-index: 1000;
+  cursor: pointer;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  min-width: 140px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
   align-items: center;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-  z-index: 100;
-  border: 1px solid rgba(0, 0, 0, 0.1);
-  max-width: 140px;
+}
+
+.weather-widget::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+  transform: translateX(-100%);
+  transition: transform 0.6s;
+}
+
+.weather-widget:hover::before {
+  transform: translateX(100%);
+}
+
+.weather-widget:hover {
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 0 15px 45px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.3);
 }
 
 .weather-content {
@@ -188,8 +217,27 @@
 }
 
 .weather-icon {
-  width: 60px;
-  height: 60px;
+  width: 45px;
+  height: 45px;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+  transition: transform 0.3s ease;
+  margin-bottom: 8px;
+}
+
+.weather-widget:hover .weather-icon {
+  transform: scale(1.1) rotate(5deg);
+}
+
+.weather-widget img {
+  width: 45px;
+  height: 45px;
+  margin-bottom: 8px;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+  transition: transform 0.3s ease;
+}
+
+.weather-widget:hover img {
+  transform: scale(1.1) rotate(5deg);
 }
 
 .weather-info {
@@ -197,21 +245,196 @@
 }
 
 .weather-city {
-  font-size: 0.9rem;
-  font-weight: 500;
-  margin-bottom: 2px;
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 6px;
+  opacity: 0.95;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+  letter-spacing: 0.5px;
 }
 
 .weather-temp {
-  font-size: 1.4rem;
+  font-size: 20px;
   font-weight: 700;
-  color: var(--cinza-escuro);
+  margin-bottom: 6px;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+  background: linear-gradient(45deg, #fff, #f0f0f0);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 .weather-loading {
-  font-size: 0.8rem;
-  margin-top: 5px;
-  color: var(--cor-texto-claro);
+  font-size: 11px;
+  opacity: 0.8;
+  font-weight: 500;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+/* Estilos para os novos controles */
+.widget-close-btn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  color: white;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: bold;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+  opacity: 0;
+  transform: scale(0.8);
+}
+
+.weather-widget:hover .widget-close-btn {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.widget-close-btn:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: scale(1.1);
+}
+
+.widget-mode-indicator {
+  position: absolute;
+  bottom: 8px;
+  left: 8px;
+  background: rgba(0, 0, 0, 0.4);
+  color: white;
+  padding: 3px 8px;
+  border-radius: 12px;
+  font-size: 9px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  backdrop-filter: blur(5px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Animações para transição entre modos */
+.weather-widget.mode-transition {
+  animation: modeSwitch 0.6s ease-in-out;
+}
+
+@keyframes modeSwitch {
+  0% { transform: scale(1) rotateY(0deg); }
+  50% { transform: scale(0.9) rotateY(90deg); }
+  100% { transform: scale(1) rotateY(0deg); }
+}
+
+/* Estilos para o botão de reabrir */
+#widget-reopen-btn {
+  animation: pulseGlow 2s infinite;
+}
+
+@keyframes pulseGlow {
+  0%, 100% {
+    box-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.6), 0 0 30px rgba(255, 255, 255, 0.4);
+  }
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .weather-widget {
+    top: 15px;
+    right: 15px;
+    padding: 15px;
+    min-width: 120px;
+    border-radius: 15px;
+  }
+  
+  .weather-widget img {
+    width: 35px;
+    height: 35px;
+  }
+  
+  .weather-icon {
+    width: 35px;
+    height: 35px;
+  }
+  
+  .weather-temp {
+    font-size: 16px;
+  }
+  
+  .weather-city {
+    font-size: 11px;
+  }
+  
+  .weather-loading {
+    font-size: 9px;
+  }
+  
+  .widget-close-btn {
+    width: 20px;
+    height: 20px;
+    font-size: 14px;
+    top: 6px;
+    right: 6px;
+  }
+  
+  .widget-mode-indicator {
+    font-size: 8px;
+    padding: 2px 6px;
+    bottom: 6px;
+    left: 6px;
+  }
+  
+  #widget-reopen-btn {
+    width: 35px;
+    height: 35px;
+    font-size: 16px;
+    top: 15px;
+    right: 15px;
+  }
+}
+
+@media (max-width: 480px) {
+  .weather-widget {
+    top: 10px;
+    right: 10px;
+    padding: 12px;
+    min-width: 100px;
+  }
+  
+  .weather-widget img,
+  .weather-icon {
+    width: 30px;
+    height: 30px;
+  }
+  
+  .weather-temp {
+    font-size: 14px;
+  }
+  
+  .weather-city {
+    font-size: 10px;
+  }
+  
+  .weather-loading {
+    font-size: 8px;
+  }
+  
+  #widget-reopen-btn {
+    width: 30px;
+    height: 30px;
+    font-size: 14px;
+    top: 10px;
+    right: 10px;
+  }
 }
 
 /* Status badges */
@@ -484,4 +707,4 @@
   .section-title {
     font-size: 1.5rem;
   }
-} 
+}
