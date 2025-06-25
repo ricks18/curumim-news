@@ -160,7 +160,6 @@ Contribuições são bem-vindas! Para contribuir:
 ## 📞 Contato
 
 - **Website**: [curumim-news.vercel.app](https://curumim-news.vercel.app)
-- **Email**: contato@curumim-news.com
 - **GitHub**: [@ricks18](https://github.com/ricks18)
 
 ---
