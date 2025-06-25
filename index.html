@@ -51,7 +51,34 @@
         </div>
     </header>
 
-    <main>
+    <!-- Widgets de Clima e Dólar -->
+    <div class="header-widgets">
+        <div class="widget-container">
+            <aside class="weather-widget-small" id="clima-widget">
+                <div class="widget-icon">
+                    <img src="https://openweathermap.org/img/wn/10d@2x.png" alt="Clima" class="weather-icon" id="weather-icon">
+                </div>
+                <div class="widget-info">
+                    <div class="widget-city" id="weather-city">Manaus</div>
+                    <div class="widget-temp" id="weather-temp">18°C</div>
+                </div>
+                <div class="widget-loading" id="weather-loading">Carregando...</div>
+            </aside>
+            
+            <aside class="dolar-widget-small" id="dolar-widget">
+                <div class="widget-icon">
+                    <i class="fas fa-dollar-sign"></i>
+                </div>
+                <div class="widget-info">
+                    <div class="widget-label">USD/BRL</div>
+                    <div class="widget-value" id="dolar-value">R$ 5,25</div>
+                </div>
+                <div class="widget-loading" id="dolar-loading">Carregando...</div>
+            </aside>
+        </div>
+    </div>
+
+    <main class="main-content">
         <!-- Título da seção principal -->
         <section class="latest-news-header">
             <div class="container">
@@ -132,17 +159,7 @@
         </section>
     </main>
 
-    <!-- Widget de Clima -->
-    <aside class="weather-widget">
-        <div class="weather-content">
-            <img src="https://openweathermap.org/img/wn/10d@2x.png" alt="Clima" class="weather-icon" id="weather-icon">
-            <div class="weather-info">
-                <div class="weather-city" id="weather-city">Manaus</div>
-                <span class="weather-temp" id="weather-temp">18°C</span>
-            </div>
-        </div>
-        <div class="weather-loading">Carregando</div>
-    </aside>
+
 
     <footer class="site-footer">
         <div class="container">
@@ -161,36 +178,10 @@
                             <li><a href="/sobre.html">Sobre</a></li>
                         </ul>
                     </div>
-                    
-                    <div class="footer-section">
-                        <h3>Categorias</h3>
-                        <ul>
-                            <li><a href="#">Política</a></li>
-                            <li><a href="#">Esportes</a></li>
-                            <li><a href="#">Entretenimento</a></li>
-                            <li><a href="#">Tecnologia</a></li>
-                        </ul>
-                    </div>
-                    
-                    <div class="footer-section">
-                        <h3>Institucional</h3>
-                        <ul>
-                            <li><a href="/sobre.html">Quem Somos</a></li>
-                            <li><a href="#">Política de Privacidade</a></li>
-                            <li><a href="#">Termos de Uso</a></li>
-                        </ul>
-                    </div>
                 </div>
             </div>
             
             <div class="footer-bottom">
-                <div class="social-icons">
-                    <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
-                    <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
-                    <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
-                    <a href="#" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
-                </div>
-                
                 <div class="copyright">
                     <p>&copy; 2025 Curumim News. Todos os direitos reservados.</p>
                 </div>
@@ -207,4 +198,4 @@
     <script type="module" src="assets/js/home.js"></script>
     <script type="module" src="assets/js/novo-layout.js"></script>
 </body>
-</html> 
+</html>

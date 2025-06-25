@@ -7,6 +7,7 @@
     <title>Sobre Nós | Curumim News</title>
     <link rel="stylesheet" href="assets/css/modern.css">
     <link rel="stylesheet" href="assets/css/sobre.css">
+    <link rel="stylesheet" href="assets/css/novo-layout.css">
     <link rel="icon" type="image/png" href="assets/img/favicon.png">
     <!-- Font Awesome para ícones -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -50,6 +51,37 @@
         </div>
     </header>
 
+    <!-- Widgets de Clima e Dólar -->
+    <div class="header-widgets">
+        <div class="widget-container">
+            <!-- Widget de Clima -->
+            <div class="weather-widget-small">
+                <div class="widget-icon">
+                    <img src="https://openweathermap.org/img/wn/01d@2x.png" alt="Clima" width="24" height="24">
+                </div>
+                <div class="widget-info">
+                    <div class="widget-city">Carregando...</div>
+                    <div class="widget-temp">--°C</div>
+                </div>
+                <div class="widget-loading" style="display: none;">Carregando...</div>
+            </div>
+            
+            <!-- Widget de Dólar -->
+            <div class="dolar-widget-small">
+                <div class="widget-icon">
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                        <path d="M10 5L15 12.5H7.5L10 5Z" fill="#00FF00"/>
+                    </svg>
+                </div>
+                <div class="widget-info">
+                    <div class="widget-label">USD/BRL</div>
+                    <div class="widget-value">R$ --,--</div>
+                </div>
+                <div class="widget-loading" style="display: none;">Carregando...</div>
+            </div>
+        </div>
+    </div>
+
     <main class="sobre-main">
         <!-- Seção Hero -->
         <section class="sobre-hero">
@@ -59,21 +91,6 @@
             </div>
         </section>
 
-        <!-- Seção História -->
-        <section class="sobre-section historia-section">
-            <div class="container">
-                <div class="section-content">
-                    <div class="text-content">
-                        <h2>Nossa História</h2>
-                        <p>colocar um texto sobre aqui</p>
-                        <p>colocar outra parte do texto sobre aqui</p>
-                    </div>
-                    <div class="image-content">
-                         <img src="assets/img/placeholder-team.svg" alt="Ilustração da equipe Curumim News"> 
-                    </div>
-                </div>
-            </div>
-        </section>
 
         <!-- Seção Missão e Valores -->
         <section class="sobre-section missao-valores-section">
@@ -102,59 +119,65 @@
             <div class="container">
                 <h2><i class="fas fa-users"></i> Conheça Nossa Equipe</h2>
                 <div class="equipe-grid">
-                    <!-- Membro 1 (Placeholder) -->
+                    <!-- Membro 1 -->
                     <div class="team-member-card">
-                        <div class="member-photo-placeholder">
-                            <i class="fas fa-user"></i>
+                        <div class="member-photo">
+                            <img src="assets/img/artur.jpg" alt="Artur Liu" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                            <div class="member-photo-placeholder" style="display: none;">
+                                <i class="fas fa-user"></i>
+                            </div>
                         </div>
                         <div class="member-info">
-                            <h3 class="member-name">Nome do Membro</h3>
-                            <p class="member-position">Cargo/Função</p>
-                            <p class="member-bio">Breve descrição sobre a experiência e foco do membro da equipe. Preencha aqui.</p>
+                            <h3 class="member-name">Artur Liu</h3>
+                            <p class="member-position">"Líder"</p>
+                            <p class="member-bio">Responsável por passar as instruções.</p>
                         </div>
                     </div>
-                    <!-- Membro 2 (Placeholder) -->
+                    <!-- Membro 2 -->
                      <div class="team-member-card">
-                        <div class="member-photo-placeholder">
-                            <i class="fas fa-user"></i>
+                        <div class="member-photo">
+                            <img src="assets/img/felipe.jpg" alt="Felipe Freitas">
                         </div>
                         <div class="member-info">
-                            <h3 class="member-name">Nome do Membro</h3>
-                            <p class="member-position">Cargo/Função</p>
-                            <p class="member-bio">Breve descrição sobre a experiência e foco do membro da equipe. Preencha aqui.</p>
+                            <h3 class="member-name">Felipe Freitas</h3>
+                            <p class="member-position">Jornalista</p>
+                            <p class="member-bio">Responsável por alimentar o site com as noticias e curiosidades.</p>
                         </div>
                     </div>
-                    <!-- Membro 3 (Placeholder) -->
+                    <!-- Membro 3 -->
                      <div class="team-member-card">
-                        <div class="member-photo-placeholder">
-                            <i class="fas fa-user"></i>
+                        <div class="member-photo">
+                            <img src="assets/img/gabriel.jpg" alt="Gabriel Moreira" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                            <div class="member-photo-placeholder" style="display: none;">
+                                <i class="fas fa-user"></i>
+                            </div>
                         </div>
                         <div class="member-info">
-                            <h3 class="member-name">Nome do Membro</h3>
-                            <p class="member-position">Cargo/Função</p>
-                            <p class="member-bio">Breve descrição sobre a experiência e foco do membro da equipe. Preencha aqui.</p>
+                            <h3 class="member-name">Gabriel Moreira</h3>
+                            <p class="member-position">Designer</p>
+                            <p class="member-bio">Responsável por fazer o protótipo do site.</p>
                         </div>
                     </div>
-                    <!-- Membro 4 (Placeholder) -->
+                    <!-- Membro 4 -->
                      <div class="team-member-card">
-                        <div class="member-photo-placeholder">
-                            <i class="fas fa-user"></i>
+                        <div class="member-photo">
+                            <img src="assets/img/ferreira.jpg" alt="Guilherme Ferreira">
                         </div>
                         <div class="member-info">
-                            <h3 class="member-name">Nome do Membro</h3>
-                            <p class="member-position">Cargo/Função</p>
-                            <p class="member-bio">Breve descrição sobre a experiência e foco do membro da equipe. Preencha aqui.</p>
+                            <h3 class="member-name">Guilherme Ferreira</h3>
+                            <p class="member-position">Jornalista</p>
+                            <p class="member-bio">Responsável por alimentar o site com as noticias e curiosidades.</p>
                         </div>
                     </div>
-                    <!-- Membro 5 (Placeholder) -->
+                    <!-- Membro 5 -->
                      <div class="team-member-card">
-                        <div class="member-photo-placeholder">
-                            <i class="fas fa-user"></i>
+                        <div class="member-photo">
+                            <img src="assets/img/henrique.jpg" alt="Henrique Rezende">
                         </div>
                         <div class="member-info">
-                            <h3 class="member-name">Nome do Membro</h3>
-                            <p class="member-position">Cargo/Função</p>
-                            <p class="member-bio">Breve descrição sobre a experiência e foco do membro da equipe. Preencha aqui.</p>
+                            <h3 class="member-name">Henrique Rezende</h3>
+                            <p class="member-position">Programador</p>
+                            <p class="member-bio">Responsável por desenvolver o site por completo.</p>
                         </div>
                     </div>
                 </div>
@@ -194,36 +217,10 @@
                             <li><a href="/sobre.html">Sobre</a></li>
                         </ul>
                     </div>
-                    
-                    <div class="footer-section">
-                        <h3>Categorias</h3>
-                        <ul>
-                            <li><a href="#">Política</a></li>
-                            <li><a href="#">Esportes</a></li>
-                            <li><a href="#">Entretenimento</a></li>
-                            <li><a href="#">Tecnologia</a></li>
-                        </ul>
-                    </div>
-                    
-                    <div class="footer-section">
-                        <h3>Institucional</h3>
-                        <ul>
-                            <li><a href="/sobre.html">Quem Somos</a></li>
-                            <li><a href="#">Política de Privacidade</a></li>
-                            <li><a href="#">Termos de Uso</a></li>
-                        </ul>
-                    </div>
                 </div>
             </div>
             
             <div class="footer-bottom">
-                <div class="social-icons">
-                    <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
-                    <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
-                    <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
-                    <a href="#" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
-                </div>
-                
                 <div class="copyright">
                     <p>&copy; 2025 Curumim News. Todos os direitos reservados.</p>
                 </div>
@@ -236,5 +233,6 @@
 
     <!-- Scripts -->
     <script type="module" src="assets/js/main.js"></script>
+    <script type="module" src="assets/js/novo-layout.js"></script>
 </body>
-</html> 
+</html>

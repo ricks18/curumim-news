@@ -21,8 +21,6 @@ const state = {
   totalPages: 1,
   weatherCity: 0,
   currentFilter: 'all',
-  widgetVisible: true,
-  widgetMode: 'clima', // 'clima' ou 'dolar'
   lastWeatherUpdate: 0,
   lastDolarUpdate: 0,
   dolarData: null
@@ -47,7 +45,8 @@ document.addEventListener('DOMContentLoaded', () => {
   initNewsCards();
   initAdditionalNews();
   initCuriosidades();
-  initWeatherWidget();
+  initHeaderWidgets();
+  setupHeaderWidgets();
   setupEventListeners();
 });
 
@@ -75,19 +74,8 @@ function setupEventListeners() {
     });
   });
   
-  // Widget de clima/dólar - controles
-  const weatherWidget = document.querySelector('.weather-widget');
-  if (weatherWidget) {
-    // Clique no widget alterna entre clima e dólar
-    weatherWidget.addEventListener('click', (e) => {
-      if (!e.target.closest('.widget-controls')) {
-        toggleWidgetMode();
-      }
-    });
-  }
-
-  // Configurar controles do widget após criação
-  setupWidgetControls();
+  // Configurar widgets do cabeçalho
+  setupHeaderWidgets();
 
   // Botão carregar mais notícias
   const loadMoreBtn = document.getElementById('load-more');
@@ -448,53 +436,35 @@ function renderCuriosidades(curiosidadesArray) {
 }
 
 /**
- * Inicializa e configura o widget de clima e dólar
+ * Inicializa e configura os widgets do cabeçalho (clima e dólar)
  */
-function initWeatherWidget() {
-  // Verificar se o widget deve estar visível
-  const savedVisibility = localStorage.getItem('curumim_widget_visible');
-  if (savedVisibility !== null) {
-    state.widgetVisible = savedVisibility === 'true';
-  }
-  
-  // Aplicar visibilidade inicial
-  const widget = document.querySelector('.weather-widget');
-  if (widget) {
-    widget.style.display = state.widgetVisible ? 'flex' : 'none';
-  }
-  
+function initHeaderWidgets() {
   // Carregar dados iniciais
-  updateWeather();
-  updateDolar();
+  updateWeatherWidget();
+  updateDolarWidget();
   
   // Atualizar clima a cada 2 minutos
   setInterval(() => {
-    if (state.widgetMode === 'clima') {
-      updateWeather();
-    }
+    updateWeatherWidget();
   }, 120000);
   
   // Atualizar dólar a cada 5 minutos
   setInterval(() => {
-    if (state.widgetMode === 'dolar') {
-      updateDolar();
-    }
+    updateDolarWidget();
   }, 300000);
   
   // Rotação automática de cidades a cada 30 segundos
   setInterval(() => {
-    if (state.widgetMode === 'clima' && state.widgetVisible) {
-      state.weatherCity = (state.weatherCity + 1) % cidadesNorte.length;
-      updateWeather();
-    }
+    state.weatherCity = (state.weatherCity + 1) % cidadesNorte.length;
+    updateWeatherWidget();
   }, 30000);
 }
 
 /**
- * Atualiza o widget de clima
+ * Atualiza o widget de clima no cabeçalho
  * @param {boolean} forceUpdate - Se deve forçar a troca de cidade
  */
-async function updateWeather(forceUpdate = false) {
+async function updateWeatherWidget(forceUpdate = false) {
   try {
     // Verificar se é muito cedo para atualizar (cache de 1 minuto)
     const now = Date.now();
@@ -502,28 +472,27 @@ async function updateWeather(forceUpdate = false) {
       return;
     }
     
-    const weatherIcon = document.getElementById('weather-icon');
-    const weatherTemp = document.getElementById('weather-temp');
-    const weatherCity = document.getElementById('weather-city');
-    const loadingText = document.querySelector('.weather-loading');
+    const weatherIcon = document.querySelector('.weather-widget-small .widget-icon');
+    const weatherTemp = document.querySelector('.weather-widget-small .widget-temp');
+    const weatherCity = document.querySelector('.weather-widget-small .widget-city');
+    const loadingText = document.querySelector('.weather-widget-small .widget-loading');
     
     if (!weatherIcon || !weatherTemp || !weatherCity) return;
     
-    // Mostrar status de carregamento apenas se visível
-    if (state.widgetMode === 'clima' && loadingText) {
+    // Mostrar status de carregamento
+    if (loadingText) {
       loadingText.textContent = 'Carregando...';
+      loadingText.style.display = 'block';
     }
     
     // Dados da cidade atual
     const cidade = cidadesNorte[state.weatherCity];
     
     // Atualizar nome da cidade enquanto carrega
-    if (state.widgetMode === 'clima') {
-      weatherCity.textContent = cidade.nome;
-    }
+    weatherCity.textContent = cidade.nome;
     
     // Buscar dados climáticos da API com retry
-    const apiKey = '7f9f27957bd1002f6def80e53eb9d828';
+    const apiKey = 'bd5e378503939ddaee76f12ad7a97608';
     const url = `https://api.openweathermap.org/data/2.5/weather?lat=${cidade.lat}&lon=${cidade.lon}&units=metric&lang=pt_br&appid=${apiKey}`;
     
     let retries = 3;
@@ -564,15 +533,13 @@ async function updateWeather(forceUpdate = false) {
     const descricao = data.weather[0].description;
     const sensacao = Math.round(data.main.feels_like);
     
-    if (state.widgetMode === 'clima') {
-      weatherTemp.textContent = `${temperatura}°C`;
-      weatherIcon.src = `https://openweathermap.org/img/wn/${iconCode}@2x.png`;
-      weatherIcon.alt = descricao;
-      
-      // Atualizar texto de carregamento com informações extras
-      if (loadingText) {
-        loadingText.textContent = `Sensação: ${sensacao}°C`;
-      }
+    weatherTemp.textContent = `${temperatura}°C`;
+    weatherIcon.src = `https://openweathermap.org/img/wn/${iconCode}@2x.png`;
+    weatherIcon.alt = descricao;
+    
+    // Ocultar texto de carregamento
+    if (loadingText) {
+      loadingText.style.display = 'none';
     }
     
     // Atualizar timestamp do cache
@@ -583,23 +550,22 @@ async function updateWeather(forceUpdate = false) {
   } catch (error) {
     console.error('Erro ao atualizar widget de clima:', error);
     
-    // Mostrar erro apenas se estiver no modo clima
-    if (state.widgetMode === 'clima') {
-      const loadingText = document.querySelector('.weather-loading');
-      if (loadingText) {
-        loadingText.textContent = 'Erro ao carregar';
-      }
-      
-      // Tentar novamente em 30 segundos
-      setTimeout(() => updateWeather(), 30000);
+    // Mostrar erro
+    const loadingText = document.querySelector('.weather-widget-small .widget-loading');
+    if (loadingText) {
+      loadingText.textContent = 'Erro ao carregar';
+      loadingText.style.display = 'block';
     }
+    
+    // Tentar novamente em 30 segundos
+    setTimeout(() => updateWeatherWidget(), 30000);
   }
 }
 
 /**
- * Atualiza a cotação do dólar
+ * Atualiza o widget de dólar no cabeçalho
  */
-async function updateDolar() {
+async function updateDolarWidget() {
   try {
     // Verificar se é muito cedo para atualizar (cache de 5 minutos)
     const now = Date.now();
@@ -607,16 +573,17 @@ async function updateDolar() {
       return;
     }
     
-    const weatherIcon = document.getElementById('weather-icon');
-    const weatherTemp = document.getElementById('weather-temp');
-    const weatherCity = document.getElementById('weather-city');
-    const loadingText = document.querySelector('.weather-loading');
+    const dolarIcon = document.querySelector('.dolar-widget-small .widget-icon');
+    const dolarValue = document.querySelector('.dolar-widget-small .widget-value');
+    const dolarLabel = document.querySelector('.dolar-widget-small .widget-label');
+    const loadingText = document.querySelector('.dolar-widget-small .widget-loading');
     
-    if (!weatherIcon || !weatherTemp || !weatherCity) return;
+    if (!dolarIcon || !dolarValue || !dolarLabel) return;
     
-    // Mostrar status de carregamento apenas se visível
-    if (state.widgetMode === 'dolar' && loadingText) {
+    // Mostrar status de carregamento
+    if (loadingText) {
       loadingText.textContent = 'Carregando...';
+      loadingText.style.display = 'block';
     }
     
     // Buscar dados da cotação com retry
@@ -669,24 +636,21 @@ async function updateDolar() {
       baixa: parseFloat(cotacao.low)
     };
     
-    // Atualizar elementos se estiver no modo dólar
-    if (state.widgetMode === 'dolar') {
-      weatherCity.textContent = 'USD/BRL';
-      weatherTemp.textContent = `R$ ${valor.toFixed(2)}`;
-      
-      // Definir ícone baseado na variação
-      const isPositive = variacao >= 0;
-      weatherIcon.src = isPositive ? 
-        'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTIwIDEwTDMwIDI1SDE1TDIwIDEwWiIgZmlsbD0iIzAwRkYwMCIvPgo8L3N2Zz4K' :
-        'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTIwIDMwTDEwIDE1SDI1TDIwIDMwWiIgZmlsbD0iI0ZGMDAwMCIvPgo8L3N2Zz4K';
-      
-      weatherIcon.alt = isPositive ? 'Dólar em alta' : 'Dólar em baixa';
-      
-      // Atualizar texto de carregamento com variação
-      if (loadingText) {
-        const sinal = variacao >= 0 ? '+' : '';
-        loadingText.textContent = `${sinal}${variacao.toFixed(2)}%`;
-      }
+    // Atualizar elementos do widget de dólar
+    dolarLabel.textContent = 'USD/BRL';
+    dolarValue.textContent = `R$ ${valor.toFixed(2)}`;
+    
+    // Definir ícone baseado na variação
+    const isPositive = variacao >= 0;
+    dolarIcon.innerHTML = isPositive ? 
+      '<svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10 5L15 12.5H7.5L10 5Z" fill="#00FF00"/></svg>' :
+      '<svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10 15L5 7.5H12.5L10 15Z" fill="#FF0000"/></svg>';
+    
+    dolarIcon.title = isPositive ? 'Dólar em alta' : 'Dólar em baixa';
+    
+    // Ocultar texto de carregamento
+    if (loadingText) {
+      loadingText.style.display = 'none';
     }
     
     // Atualizar timestamp do cache
@@ -697,195 +661,47 @@ async function updateDolar() {
   } catch (error) {
     console.error('Erro ao atualizar cotação do dólar:', error);
     
-    // Mostrar erro apenas se estiver no modo dólar
-    if (state.widgetMode === 'dolar') {
-      const loadingText = document.querySelector('.weather-loading');
-      if (loadingText) {
-        loadingText.textContent = 'Erro ao carregar';
-      }
-      
-      // Tentar novamente em 1 minuto
-      setTimeout(() => updateDolar(), 60000);
+    // Mostrar erro
+    const loadingText = document.querySelector('.dolar-widget-small .widget-loading');
+    if (loadingText) {
+      loadingText.textContent = 'Erro ao carregar';
+      loadingText.style.display = 'block';
     }
-  }
-}
-
-/**
- * Rotaciona automaticamente as cidades no modo clima
- */
-function rotateCities() {
-  if (state.widgetMode === 'clima' && state.widgetVisible) {
-    state.weatherCity = (state.weatherCity + 1) % cidadesNorte.length;
-    updateWeather(true);
-  }
-}
-
-/**
- * Configura os controles do widget (botões de fechar, alternar modo, etc.)
- */
-function setupWidgetControls() {
-  const widget = document.querySelector('.weather-widget');
-  if (!widget) return;
-  
-  // Criar botão de fechar se não existir
-  let closeBtn = widget.querySelector('.widget-close-btn');
-  if (!closeBtn) {
-    closeBtn = document.createElement('button');
-    closeBtn.className = 'widget-close-btn';
-    closeBtn.innerHTML = '×';
-    closeBtn.title = 'Fechar widget';
-    closeBtn.style.cssText = `
-      position: absolute;
-      top: 5px;
-      right: 5px;
-      background: rgba(255, 255, 255, 0.2);
-      border: none;
-      border-radius: 50%;
-      width: 20px;
-      height: 20px;
-      color: white;
-      cursor: pointer;
-      font-size: 14px;
-      line-height: 1;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: background-color 0.2s;
-    `;
     
-    closeBtn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      toggleWidgetVisibility();
+    // Tentar novamente em 1 minuto
+    setTimeout(() => updateDolarWidget(), 60000);
+  }
+}
+
+/**
+ * Configura os widgets do cabeçalho
+ */
+function setupHeaderWidgets() {
+  // Adicionar eventos de clique nos widgets para mostrar mais informações
+  const weatherWidget = document.querySelector('.weather-widget-small');
+  const dolarWidget = document.querySelector('.dolar-widget-small');
+  
+  if (weatherWidget) {
+    weatherWidget.addEventListener('click', () => {
+      // Forçar atualização do clima
+      updateWeatherWidget(true);
     });
-    
-    widget.appendChild(closeBtn);
   }
   
-  // Criar indicador de modo se não existir
-  let modeIndicator = widget.querySelector('.widget-mode-indicator');
-  if (!modeIndicator) {
-    modeIndicator = document.createElement('div');
-    modeIndicator.className = 'widget-mode-indicator';
-    modeIndicator.style.cssText = `
-      position: absolute;
-      bottom: 5px;
-      left: 5px;
-      background: rgba(0, 0, 0, 0.3);
-      color: white;
-      padding: 2px 6px;
-      border-radius: 10px;
-      font-size: 10px;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    `;
-    
-    widget.appendChild(modeIndicator);
-  }
-  
-  // Atualizar indicador de modo
-  updateModeIndicator();
-}
-
-/**
- * Atualiza o indicador de modo do widget
- */
-function updateModeIndicator() {
-  const indicator = document.querySelector('.widget-mode-indicator');
-  if (indicator) {
-    indicator.textContent = state.widgetMode === 'clima' ? 'Clima' : 'Dólar';
+  if (dolarWidget) {
+    dolarWidget.addEventListener('click', () => {
+      // Forçar atualização do dólar
+      updateDolarWidget();
+    });
   }
 }
 
-/**
- * Alterna a visibilidade do widget
- */
-function toggleWidgetVisibility() {
-  state.widgetVisible = !state.widgetVisible;
-  localStorage.setItem('widgetVisible', state.widgetVisible.toString());
-  
-  const widget = document.querySelector('.weather-widget');
-  if (widget) {
-    widget.style.display = state.widgetVisible ? 'block' : 'none';
-  }
-  
-  // Criar botão para reabrir se necessário
-  if (!state.widgetVisible) {
-    createReopenButton();
-  } else {
-    removeReopenButton();
-  }
-}
 
-/**
- * Cria botão para reabrir o widget quando está oculto
- */
-function createReopenButton() {
-  // Remover botão existente se houver
-  removeReopenButton();
-  
-  const reopenBtn = document.createElement('button');
-  reopenBtn.id = 'widget-reopen-btn';
-  reopenBtn.innerHTML = '🌤️';
-  reopenBtn.title = 'Abrir widget de clima/dólar';
-  reopenBtn.style.cssText = `
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    background: rgba(0, 0, 0, 0.7);
-    border: none;
-    border-radius: 50%;
-    width: 40px;
-    height: 40px;
-    color: white;
-    cursor: pointer;
-    font-size: 18px;
-    z-index: 1001;
-    transition: all 0.3s ease;
-    backdrop-filter: blur(10px);
-  `;
-  
-  reopenBtn.addEventListener('click', () => {
-    toggleWidgetVisibility();
-  });
-  
-  reopenBtn.addEventListener('mouseenter', () => {
-    reopenBtn.style.transform = 'scale(1.1)';
-    reopenBtn.style.background = 'rgba(0, 0, 0, 0.9)';
-  });
-  
-  reopenBtn.addEventListener('mouseleave', () => {
-    reopenBtn.style.transform = 'scale(1)';
-    reopenBtn.style.background = 'rgba(0, 0, 0, 0.7)';
-  });
-  
-  document.body.appendChild(reopenBtn);
-}
-
-/**
- * Remove o botão de reabrir widget
- */
-function removeReopenButton() {
-  const reopenBtn = document.getElementById('widget-reopen-btn');
-  if (reopenBtn) {
-    reopenBtn.remove();
-  }
-}
-
-/**
- * Atualiza o display do widget baseado no modo atual
- */
-function updateWidgetDisplay() {
-  if (state.widgetMode === 'clima') {
-    updateWeather();
-  } else {
-    updateDolar();
-  }
-  updateModeIndicator();
-}
 
 // Exportar para uso em outros módulos se necessário
 export default {
   updateCards: initNewsCards,
-  updateWeather,
+  updateWeatherWidget,
+  updateDolarWidget,
   loadMoreNews
 };
