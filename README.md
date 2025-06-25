@@ -96,9 +96,7 @@ curuminNews/
 ### Instalação
 
 1. **Acesse a url:**
-   ```bash https://curumim-news.vercel.app
-  
-   ```
+   https://curumim-news.vercel.app
 
 ## 👥 Equipe de Desenvolvimento
 
